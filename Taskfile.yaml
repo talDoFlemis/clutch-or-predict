@@ -1,0 +1,7 @@
+version: "3"
+
+tasks:
+  install-deps:
+    desc: Install all deps
+    cmds:
+      - uv run patchright install chromium
