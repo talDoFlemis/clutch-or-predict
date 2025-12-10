@@ -7,15 +7,16 @@ from patchright.async_api import Page
 logger = logging.getLogger(__name__)
 
 
-async def get_match_id(page: Page) -> str:
-    match = re.search(r"/matches/(\d+)", page.url)
+async def get_match_id(url: str) -> str:
+    match = re.search(r"/matches/(\d+)", url)
     if match is None:
         raise ValueError("Failed to find match id")
 
     return match.group(1)
 
 
-async def get_match_result(page: Page) -> MatchResult:
+async def get_match_result(page: Page, match_url: str) -> MatchResult:
+    await page.goto(match_url, wait_until="domcontentloaded")
     team_box = page.locator(".teamsBox")
 
     team_1 = team_box.locator(".team1-gradient")

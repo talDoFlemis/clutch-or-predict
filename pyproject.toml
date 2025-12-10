@@ -16,5 +16,10 @@ dependencies = [
 [tool.uv]
 package = true
 
+[dependency-groups]
+dev = [
+    "ruff>=0.14.8",
+]
+
 [project.scripts]
 scraper = "scraper:scrape"

@@ -118,9 +118,12 @@ async def get_map_stat(
 
 async def get_maps_stats(
     page: Page,
+    url: str,
     team_1_name: str,
     team_2_name: str,
 ) -> List[MapStat]:
+    await page.goto(url, wait_until="domcontentloaded")
+
     maps_column_locator = page.locator(".maps .flexbox-column")
     maps = await maps_column_locator.locator(
         "> div",

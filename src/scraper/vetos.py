@@ -8,8 +8,9 @@ from typing import Dict, Any, Literal
 logger = logging.getLogger(__name__)
 
 
-async def get_vetos(page: Page, t1_name: str, t2_name: str) -> Vetos:
-    match_id = await get_match_id(page)
+async def get_vetos(page: Page, url: str, t1_name: str, t2_name: str) -> Vetos:
+    await page.goto(url, wait_until="domcontentloaded")
+    match_id = await get_match_id(url)
 
     bo_locator = page.locator(".veto-box .padding").first
     bo_text = await bo_locator.inner_text()

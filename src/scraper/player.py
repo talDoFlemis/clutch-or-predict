@@ -6,6 +6,8 @@ import logging
 import asyncio
 import re
 
+from scraper.pool import PagePool
+
 
 logger = logging.getLogger(__name__)
 
@@ -139,43 +141,50 @@ async def __process_map(
 
 
 async def get_players_maps_stats(
-    page: Page,
+    pool: PagePool,
     match_url: str,
 ) -> List[PlayerMapStat]:
-    await page.goto(match_url, wait_until="domcontentloaded")
-    await page.get_by_role("link", name="Detailed Stats").click()
+    async with pool.get_page() as page:
+        await page.goto(match_url, wait_until="domcontentloaded")
+        await page.get_by_role("link", name="Detailed Stats").click()
 
-    is_best_of_1 = (
-        await page.locator(".stats-match-maps").get_by_role("link").count() == 0
+        is_best_of_1 = (
+            await page.locator(".stats-match-maps").get_by_role("link").count() == 0
+        )
+
+        logger.debug(f"Is best of 1: {is_best_of_1}")
+
+        maps_to_process = []
+
+        if is_best_of_1:
+            maps_to_process.append(page.url)
+        else:
+            map_stats_links = await page.locator(
+                ".col.stats-match-map.standard-box.a-reset"
+            ).all()
+
+            for link in map_stats_links:
+                href = await link.get_attribute("href")
+                if href is None:
+                    raise ValueError("Map stats link href not found")
+
+                maps_to_process.append(f"https://www.hltv.org{href}")
+
+            # For non MD1 we ignore the link that don't contain mapstatsid in it as it is a summary link
+            maps_to_process = [map for map in maps_to_process if "mapstatsid" in map]
+
+        logger.debug(f"Found {len(maps_to_process)} map links")
+
+    async def process_map_with_page(map_link: str) -> List[PlayerMapStat]:
+        async with pool.get_page() as page:
+            return await __process_map(page, map_link)
+
+    results = await asyncio.gather(
+        *[process_map_with_page(map_link) for map_link in maps_to_process]
     )
-    maps_to_process = []
-
-    logger.debug(f"Is best of 1: {is_best_of_1}")
-
-    if is_best_of_1:
-        maps_to_process.append(page.url)
-    else:
-        map_stats_links = await page.locator(
-            ".col.stats-match-map.standard-box.a-reset"
-        ).all()
-
-        for link in map_stats_links:
-            href = await link.get_attribute("href")
-            if href is None:
-                raise ValueError("Map stats link href not found")
-
-            maps_to_process.append(f"https://www.hltv.org{href}")
-
-        # For non MD1 we ignore the link that don't contain mapstatsid in it as it is a summary link
-        maps_to_process = [map for map in maps_to_process if "mapstatsid" in map]
-
-    logger.debug(f"Found {len(maps_to_process)} map links")
 
     stats = []
-
-    # Won't use a gather here to avoid overwhelming the server with requests
-    for map_link in maps_to_process:
-        map_stats = await __process_map(page, map_link)
+    for map_stats in results:
         stats.extend(map_stats)
 
     return stats
