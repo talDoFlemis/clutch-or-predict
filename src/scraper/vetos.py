@@ -1,6 +1,6 @@
 import re
 from scraper.models import Vetos
-from scraper.match import get_match_id
+from scraper.match import get_match_id, get_team_names
 import logging
 from patchright.async_api import Page
 from typing import Dict, Any, Literal
@@ -8,9 +8,10 @@ from typing import Dict, Any, Literal
 logger = logging.getLogger(__name__)
 
 
-async def get_vetos(page: Page, url: str, t1_name: str, t2_name: str) -> Vetos:
+async def get_vetos(page: Page, url: str) -> Vetos:
     await page.goto(url, wait_until="domcontentloaded")
     match_id = await get_match_id(url)
+    t1_name, t2_name = await get_team_names(page)
 
     bo_locator = page.locator(".veto-box .padding").first
     bo_text = await bo_locator.inner_text()

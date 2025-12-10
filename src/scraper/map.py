@@ -2,6 +2,7 @@ from typing import List
 import re
 
 from scraper.models import MapStat
+from scraper.match import get_team_names
 import logging
 from patchright.async_api import Locator, Page
 import asyncio
@@ -119,10 +120,9 @@ async def get_map_stat(
 async def get_maps_stats(
     page: Page,
     url: str,
-    team_1_name: str,
-    team_2_name: str,
 ) -> List[MapStat]:
     await page.goto(url, wait_until="domcontentloaded")
+    team_1_name, team_2_name = await get_team_names(page)
 
     maps_column_locator = page.locator(".maps .flexbox-column")
     maps = await maps_column_locator.locator(

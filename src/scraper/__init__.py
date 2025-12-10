@@ -20,25 +20,15 @@ bo5_match = (
 )
 
 
-async def process_vetos(pool: PagePool, url: str, team_1_name: str, team_2_name: str):
+async def process_vetos(pool: PagePool, url: str):
     async with pool.get_page() as page:
-        vetos = await get_vetos(
-            page,
-            url,
-            team_1_name,
-            team_2_name,
-        )
+        vetos = await get_vetos(page, url)
         print(f"{vetos.model_dump_json()}")
 
 
-async def process_maps(pool: PagePool, url: str, team_1_name: str, team_2_name: str):
+async def process_maps(pool: PagePool, url: str):
     async with pool.get_page() as page:
-        maps = await get_maps_stats(
-            page,
-            url,
-            team_1_name,
-            team_2_name,
-        )
+        maps = await get_maps_stats(page, url)
         [print(f"{map_stat.model_dump_json()}") for map_stat in maps]
 
 
@@ -73,22 +63,11 @@ async def main():
             start = asyncio.get_event_loop().time()
             pool = await create_page_pool(browser)
 
-            match_result = await process_match(pool, url)
-
             tasks = [
+                process_match(pool, url),
                 process_players_stats(pool, url),
-                process_vetos(
-                    pool,
-                    url,
-                    match_result.team_1_name,
-                    match_result.team_2_name,
-                ),
-                process_maps(
-                    pool,
-                    url,
-                    match_result.team_1_name,
-                    match_result.team_2_name,
-                ),
+                process_vetos(pool, url),
+                process_maps(pool, url),
             ]
 
             await asyncio.gather(*tasks)

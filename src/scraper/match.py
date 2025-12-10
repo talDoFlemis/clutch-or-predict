@@ -15,6 +15,18 @@ async def get_match_id(url: str) -> str:
     return match.group(1)
 
 
+async def get_team_names(page: Page) -> tuple[str, str]:
+    """Extract team names from an already loaded match page."""
+    team_box = page.locator(".teamsBox")
+    team_1_name = (
+        await team_box.locator(".team1-gradient").locator(".teamName").inner_text()
+    )
+    team_2_name = (
+        await team_box.locator(".team2-gradient").locator(".teamName").inner_text()
+    )
+    return team_1_name, team_2_name
+
+
 async def get_match_result(page: Page, match_url: str) -> MatchResult:
     await page.goto(match_url, wait_until="domcontentloaded")
     team_box = page.locator(".teamsBox")
