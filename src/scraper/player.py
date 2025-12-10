@@ -145,7 +145,7 @@ async def get_players_maps_stats(
     match_url: str,
 ) -> List[PlayerMapStat]:
     async with pool.get_page() as page:
-        await page.goto(match_url, wait_until="domcontentloaded")
+        await page.goto(match_url, wait_until="load")
         await page.get_by_role("link", name="Detailed Stats").click()
 
         is_best_of_1 = (

@@ -1,7 +1,23 @@
 version: "3"
 
 tasks:
+  redis:start:
+    desc: Start Redis server
+    cmds:
+      - docker-compose up redis
+
   install-deps:
     desc: Install all deps
     cmds:
       - uv run patchright install chromium
+
+  celery:worker:
+    desc: Start Celery worker
+    cmds:
+      - uv run celery -A scraper.tasks worker --loglevel=debug --concurrency=1
+
+  celery:flower:
+    desc: Start Flower monitoring tool
+    cmds:
+      - uv run celery -A scraper.tasks flower --port=5555
+
