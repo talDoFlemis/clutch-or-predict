@@ -51,6 +51,45 @@ class MapStat(BaseModel):
     team_2_ct_score: int
     team_2_tr_score: int
 
-    picked_by: Literal["t1", "t2", "leftover"]
+    picked_by: Literal["team_1", "team_2", "leftover"]
 
-    starting_ct: Literal[1, 2]
+    starting_ct: Literal["team_1", "team_2"]
+
+
+class PlayerMapStat(BaseModel):
+    map_stat_id: str
+
+    player_id: str
+    player_name: str
+
+    # CT Side
+    opening_kills_ct: int
+    opening_deaths_ct: int
+    multikills_ct: int
+    kast_ct: float
+    clutches_ct: int
+    kills_ct: int
+    headshot_kills_ct: int
+    assists_ct: int
+    flash_assists_ct: int
+    deaths_ct: int
+    traded_deaths_ct: int
+    adr_ct: float
+    swing_ct: float
+    rating_3_dot_0_ct: float
+
+    # TR Side
+    opening_kills_tr: int
+    opening_deaths_tr: int
+    multikills_tr: int
+    kast_tr: float
+    clutches_tr: int
+    kills_tr: int
+    headshot_kills_tr: int
+    assists_tr: int
+    flash_assists_tr: int
+    deaths_tr: int
+    traded_deaths_tr: int
+    adr_tr: float
+    swing_tr: float
+    rating_3_dot_0_tr: float

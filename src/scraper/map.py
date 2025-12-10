@@ -9,23 +9,33 @@ import asyncio
 logger = logging.getLogger(__name__)
 
 
+def get_mapstatsid_from_url(url: str) -> str:
+    match = re.search(r"/mapstatsid/(\w+)", url)
+    if match is None:
+        logger.error(f"Map Stat ID not found in URL: {url}")
+        raise ValueError("Map Stat ID not found")
+
+    return match.group(1)
+
+
 async def get_map_stat(
     map_locator: Locator,
     team_1_name: str,
     team_2_name: str,
-) -> MapStat:
+) -> MapStat | None:
     data_map = {}
 
     data_map["map_name"] = await map_locator.locator(".mapname").inner_text()
     logger.debug(f"Processing map '{data_map['map_name']}'")
 
+    map_was_played = await map_locator.get_by_role("link").count() > 0
+    if not map_was_played:
+        logger.debug(f"Map '{data_map['map_name']}' was not played, skipping")
+        return None
+
     map_id_href = await map_locator.get_by_role("link").get_attribute("href")
 
-    match = re.search(r"/mapstatsid/(\w+)", map_id_href or "")
-    if match is None:
-        raise ValueError("Map Stat ID not found")
-
-    data_map["map_stat_id"] = match.group(1)
+    data_map["map_stat_id"] = get_mapstatsid_from_url(map_id_href or "")
     logger.debug(f"Map Stat ID: {data_map['map_stat_id']}")
 
     won_locator = map_locator.locator(".won")
@@ -123,4 +133,4 @@ async def get_maps_stats(
 
     stats = await asyncio.gather(*tasks)
 
-    return stats
+    return [stat for stat in stats if stat is not None]
