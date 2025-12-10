@@ -28,6 +28,7 @@ async def create_page_pool(
         max_amount_of_concurrent_pages=max_amount_of_concurrent_pages,
         initial_page_size=initial_page_size,
         minimum_page_size=minimum_page_size,
+        default_timeout=default_timeout,
     )
 
 
@@ -36,10 +37,10 @@ class PagePool:
         self,
         browser: BrowserContext,
         queue: asyncio.Queue,
-        max_amount_of_concurrent_pages: int = 10,
-        initial_page_size: int = 5,
-        minimum_page_size: int = 5,
-        default_timeout: int = 5000,
+        max_amount_of_concurrent_pages: int,
+        initial_page_size: int,
+        minimum_page_size: int,
+        default_timeout: int,
     ):
         if initial_page_size > max_amount_of_concurrent_pages:
             raise ValueError(
@@ -63,41 +64,20 @@ class PagePool:
 
     async def acquire(self) -> Page:
         assert self.pages.qsize() >= 0
+
         logger.debug(
             f"Acquiring page from pool. Current pool size: {self.pages.qsize()}"
         )
 
-        # Try to get from queue first, but don't block if empty and we can create more
-        try:
-            page = self.pages.get_nowait()
-            logger.debug(
-                f"Acquired page from pool. Current pool size: {self.pages.qsize()}"
-            )
+        if (
+            self.pages.qsize() == 0
+            and self.current_page_count < self.max_amount_of_concurrent_pages
+        ):
+            logger.debug("Creating a new page for the pool")
+            page = await self.browser.new_page()
+            page.set_default_timeout(self.default_timeout)
+            self.current_page_count += 1
             return page
-        except asyncio.QueueEmpty:
-            pass
-
-        # If queue is empty and we haven't reached max capacity, create a new page
-        async with self._lock:
-            # Double-check after acquiring lock
-            if not self.pages.empty():
-                page = await self.pages.get()
-                logger.debug(
-                    f"Acquired page from pool. Current pool size: {self.pages.qsize()}"
-                )
-                return page
-
-            if self.current_page_count < self.max_amount_of_concurrent_pages:
-                logger.debug(
-                    f"Pool empty, creating new page. Current count: {self.current_page_count}"
-                )
-                page = await self.browser.new_page()
-                page.set_default_timeout(self.default_timeout)
-                self.current_page_count += 1
-                logger.debug(
-                    f"Created new page. Current count: {self.current_page_count}"
-                )
-                return page
 
         # If we can't create more, wait for a page to be released
         page = await self.pages.get()
@@ -108,25 +88,21 @@ class PagePool:
 
     async def release(self, page: Page):
         logger.debug(
-            f"Releasing page back to pool. Current count: {self.current_page_count}, queue size: {self.pages.qsize()}"
+            "Returning page to pool",
+            extra={
+                "pool_size": self.pages.qsize(),
+                "current_page_count": self.current_page_count,
+            },
         )
 
-        # If we're above minimum size and queue is at initial capacity, close the page instead
-        async with self._lock:
-            if (
-                self.current_page_count > self.minimum_page_size
-                and self.pages.qsize() >= self.initial_page_size
-            ):
-                logger.debug(
-                    f"Pool at capacity, closing excess page. Current count: {self.current_page_count}"
-                )
-                await page.close()
-                self.current_page_count -= 1
-                logger.debug(f"Closed page. Current count: {self.current_page_count}")
-                return
+        if self.pages.qsize() >= self.minimum_page_size:
+            logger.debug("Closing page as pool is above minimum size")
+            await page.close()
+            self.current_page_count -= 1
+            return
 
-        logger.debug("Returning page to pool")
         await self.pages.put(page)
+        logger.debug(f"Page returned to pool. Current pool size: {self.pages.qsize()}")
 
     @asynccontextmanager
     async def get_page(self):
