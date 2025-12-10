@@ -59,12 +59,27 @@ class PagePool:
             f"Acquiring page from pool. Current pool size: {self.pages.qsize()}"
         )
 
+        # Try to get from queue first, but don't block if empty and we can create more
+        try:
+            page = self.pages.get_nowait()
+            logger.debug(
+                f"Acquired page from pool. Current pool size: {self.pages.qsize()}"
+            )
+            return page
+        except asyncio.QueueEmpty:
+            pass
+
         # If queue is empty and we haven't reached max capacity, create a new page
         async with self._lock:
-            if (
-                self.pages.empty()
-                and self.current_page_count < self.max_amount_of_concurrent_pages
-            ):
+            # Double-check after acquiring lock
+            if not self.pages.empty():
+                page = await self.pages.get()
+                logger.debug(
+                    f"Acquired page from pool. Current pool size: {self.pages.qsize()}"
+                )
+                return page
+
+            if self.current_page_count < self.max_amount_of_concurrent_pages:
                 logger.debug(
                     f"Pool empty, creating new page. Current count: {self.current_page_count}"
                 )
@@ -75,6 +90,7 @@ class PagePool:
                 )
                 return page
 
+        # If we can't create more, wait for a page to be released
         page = await self.pages.get()
         logger.debug(
             f"Acquired page from pool. Current pool size: {self.pages.qsize()}"
