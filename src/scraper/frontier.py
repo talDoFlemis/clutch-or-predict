@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 import logging
 import asyncio
 from patchright.async_api import async_playwright, Page
-from scraper.tasks import scrape_match
+from scraper.tasks import match_result, player_stats, vetos, maps
 
 import redis
 
@@ -96,6 +96,7 @@ class HLTVFrontier:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
+
 async def __parse_links_on_page(page: Page):
     links_locator = await page.locator(".result-con .a-reset").all()
 
@@ -106,10 +107,14 @@ async def __parse_links_on_page(page: Page):
         if href is not None:
             full_url = f"https://www.hltv.org{href}"
             logger.info(f"Match URL: {full_url}")
-            scrape_match.delay(full_url) # type: ignore # Schedule the scraping task
+            match_result.delay(full_url)  # type: ignore
+            maps.delay(full_url)  # type: ignore
+            vetos.delay(full_url)  # type: ignore
+            player_stats.delay(full_url)  # type: ignore
             amount_of_links += 1
 
     logger.info(f"Found {amount_of_links} match links on the page.")
+
 
 async def __parse_results_page(page: Page, url: str) -> None:
     logger.info(f"Parsing results page: {url}")
@@ -125,8 +130,8 @@ async def __parse_results_page(page: Page, url: str) -> None:
         pagination_next_class = await pagination_next_locator.get_attribute("class")
         await __parse_links_on_page(page)
 
-
     logger.info(f"Finished parsing results page: {url}")
+
 
 async def run_frontier(
     args: Any, start_date: Optional[datetime], end_date: Optional[datetime]
@@ -141,7 +146,9 @@ async def run_frontier(
             )
 
             start = asyncio.get_event_loop().time()
-            pool = await create_page_pool(browser, max_amount_of_concurrent_pages=1,initial_page_size=1)
+            pool = await create_page_pool(
+                browser, max_amount_of_concurrent_pages=1, initial_page_size=1
+            )
 
             async def parser(url: str) -> None:
                 async with pool.get_page() as page:

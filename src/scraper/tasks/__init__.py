@@ -97,6 +97,7 @@ def ensure_initialized():
                     browser,
                     max_amount_of_concurrent_pages=30,
                     initial_page_size=30,
+                    minimum_page_size=30,
                 )
 
             # 3. Run setup on the background loop and wait for result
@@ -156,9 +157,11 @@ def shutdown_worker(**kwargs):
 
 
 @app.task(
-    bind=True, name="scraper.tasks.scrape_match", max_retries=3, default_retry_delay=10
+    bind=True,
+    name="scraper.tasks.match_result",
+    max_retries=3,
 )
-def scrape_match(self, match_url: str):
+def match_result(self, match_url: str):
     """
     Scrape a CS:GO/CS2 match from HLTV.
     """
@@ -173,71 +176,128 @@ def scrape_match(self, match_url: str):
         self.retry(exc=e)
 
     if page_pool is None or event_loop is None:
-        # Should not happen due to ensure_initialized raising, but purely for type safety
         raise RuntimeError("Resources failed to initialize properly.")
-
-    logger.info(f"Starting to scrape match: {match_url}")
 
     # Capture pool variable for closure
     pool = page_pool
 
     async def scrape():
-        logger.debug("Starting concurrent scraping tasks")
-
-        async def process_match():
-            logger.debug("Acquiring page for match processing")
-            async with pool.get_page() as page:
-                logger.debug(f"Processing match: {match_url}")
-                result = await get_match_result(page, match_url)
-                logger.debug("Match processing completed")
-                return result
-
-        async def process_players_stats():
-            logger.debug("Starting player stats processing")
-            result = await get_players_maps_stats(pool, match_url)
-            logger.debug("Player stats processing completed")
-            return result
-
-        async def process_vetos():
-            logger.debug("Acquiring page for vetos processing")
-            async with pool.get_page() as page:
-                logger.debug(f"Processing vetos: {match_url}")
-                result = await get_vetos(page, match_url)
-                logger.debug("Vetos processing completed")
-                return result
-
-        async def process_maps():
-            logger.debug("Acquiring page for maps processing")
-            async with pool.get_page() as page:
-                logger.debug(f"Processing maps: {match_url}")
-                result = await get_maps_stats(page, match_url)
-                logger.debug("Maps processing completed")
-                return result
-
-        # Run all scraping sub-tasks concurrently
-        match_result, players_stats, vetos, maps_stats = await asyncio.gather(
-            process_match(),
-            process_players_stats(),
-            process_vetos(),
-            process_maps(),
-        )
-
-        return {
-            "match_result": match_result.model_dump() if match_result else None,
-            "players_stats": [p.model_dump() for p in players_stats]
-            if players_stats
-            else [],
-            "vetos": vetos.model_dump() if vetos else None,
-            "maps_stats": [m.model_dump() for m in maps_stats] if maps_stats else [],
-        }
+        async with pool.get_page() as page:
+            return await get_match_result(page, match_url)
 
     try:
-        # Submit the scraping coroutine to our dedicated event loop
-        # This blocks the Celery thread but not the event loop
         future = asyncio.run_coroutine_threadsafe(scrape(), event_loop)
         result = future.result()
+        return result.model_dump_json()
+    except Exception as e:
+        logger.exception(f"Fatal error in scrape: {e}")
+        self.retry(exc=e)
+
+
+@app.task(
+    bind=True,
+    name="scraper.tasks.vetos",
+    max_retries=3,
+)
+def vetos(self, match_url: str):
+    """
+    Pull only the vetos of a CS:GO/CS2 match from HLTV.
+    """
+    global page_pool, event_loop
+
+    try:
+        ensure_initialized()
+    except Exception as e:
+        logger.error(f"Initialization failed: {e}")
+        self.retry(exc=e)
+
+    if page_pool is None or event_loop is None:
+        raise RuntimeError("Resources failed to initialize properly.")
+
+    # Capture pool variable for closure
+    pool = page_pool
+
+    async def scrape():
+        async with pool.get_page() as page:
+            return await get_vetos(page, match_url)
+
+    try:
+        future = asyncio.run_coroutine_threadsafe(scrape(), event_loop)
+        result = future.result()
+        return result.model_dump_json()
+    except Exception as e:
+        logger.exception(f"Fatal error in scrape: {e}")
+        self.retry(exc=e)
+
+
+@app.task(
+    bind=True,
+    name="scraper.tasks.maps",
+    max_retries=3,
+)
+def maps(self, match_url: str):
+    """
+    Process only the maps stats of a CS:GO/CS2 match from HLTV.
+    """
+    global page_pool, event_loop
+
+    try:
+        ensure_initialized()
+    except Exception as e:
+        logger.error(f"Initialization failed: {e}")
+        self.retry(exc=e)
+
+    if page_pool is None or event_loop is None:
+        raise RuntimeError("Resources failed to initialize properly.")
+
+    # Capture pool variable for closure
+    pool = page_pool
+
+    async def scrape():
+        async with pool.get_page() as page:
+            result = await get_maps_stats(page, match_url)
+            return result
+
+    try:
+        future = asyncio.run_coroutine_threadsafe(scrape(), event_loop)
+        result = future.result()
+        return [map.model_dump_json() for map in result]
+    except Exception as e:
+        logger.exception(f"Fatal error in scrape: {e}")
+        self.retry(exc=e)
+
+
+@app.task(
+    bind=True,
+    name="scraper.tasks.player_stats",
+    max_retries=3,
+    default_retry_delay=10,
+)
+def player_stats(self, match_url: str):
+    """
+    Process only the player stats of a CS:GO/CS2 match from HLTV.
+    """
+    global page_pool, event_loop
+
+    try:
+        ensure_initialized()
+    except Exception as e:
+        logger.error(f"Initialization failed: {e}")
+        self.retry(exc=e)
+
+    if page_pool is None or event_loop is None:
+        raise RuntimeError("Resources failed to initialize properly.")
+
+    # Capture pool variable for closure
+    pool = page_pool
+
+    try:
+        future = asyncio.run_coroutine_threadsafe(
+            get_players_maps_stats(pool, match_url), event_loop
+        )
+        result = future.result()
         logger.info(f"Successfully scraped match: {match_url}")
-        return result
+        return [player.model_dump_json() for player in result]
     except Exception as e:
         logger.exception(f"Fatal error in scrape: {e}")
         self.retry(exc=e)
