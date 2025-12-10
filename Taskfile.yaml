@@ -4,7 +4,8 @@ tasks:
   redis:start:
     desc: Start Redis server
     cmds:
-      - docker-compose up redis
+      - docker-compose up redis -d
+      - docker-compose up redis-insight -d
 
   install-deps:
     desc: Install all deps

@@ -12,6 +12,7 @@ dependencies = [
   "pandas>=2.3.3",
   "patchright>=1.56.0",
   "pydantic>=2.12.5",
+  "redis>=5.0.0",
 ]
 
 [tool.uv]
@@ -24,3 +25,4 @@ dev = [
 
 [project.scripts]
 scraper = "scraper:scrape"
+frontier = "scraper.frontier:main"

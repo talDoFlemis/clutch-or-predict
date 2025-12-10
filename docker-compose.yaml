@@ -6,6 +6,15 @@ services:
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes --requirepass senha
-
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: redis-insight
+    ports:
+      - "5540:5540"
+    volumes:
+      - redis-insight-data:/data
+    depends_on:
+      - redis
 volumes:
   redis_data:
+  redis-insight-data:

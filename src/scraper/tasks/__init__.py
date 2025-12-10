@@ -95,7 +95,8 @@ def ensure_initialized():
                 logger.debug("Creating Page Pool...")
                 page_pool = await create_page_pool(
                     browser,
-                    max_amount_of_concurrent_pages=20,
+                    max_amount_of_concurrent_pages=30,
+                    initial_page_size=30,
                 )
 
             # 3. Run setup on the background loop and wait for result
