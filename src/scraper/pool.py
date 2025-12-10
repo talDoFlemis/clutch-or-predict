@@ -12,7 +12,7 @@ async def create_page_pool(
     max_amount_of_concurrent_pages: int = 10,
     initial_page_size: int = 5,
     minimum_page_size: int = 5,
-    default_timeout: int = 10000,
+    default_timeout: int = 30000,
 ):
     queue = asyncio.Queue(maxsize=max_amount_of_concurrent_pages)
     pages = [await browser.new_page() for _ in range(initial_page_size)]

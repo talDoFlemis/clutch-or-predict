@@ -19,30 +19,35 @@ def main():
     print("Sending match scraping task to Celery...")
 
     # Send task to Celery
-    result = scrape_match.delay(bo1_match)
+    start = time.time()
+    matches = [bo1_match, bo3_match, bo5_match]
+    results = [scrape_match.delay(match) for match in matches]
 
-    print(f"Task ID: {result.id}")
     print("Waiting for result...")
 
     # Wait for result (with timeout)
     try:
-        data = result.get(timeout=60)
+        for result in results:
+            data = result.get(timeout=60)
 
-        print("\n=== Match Result ===")
-        print(data["match_result"])
+            print("\n=== Match Result ===")
+            print(data["match_result"])
 
-        print("\n=== Vetos ===")
-        print(data["vetos"])
+            print("\n=== Vetos ===")
+            print(data["vetos"])
 
-        print(f"\n=== Maps Stats ({len(data['maps_stats'])} maps) ===")
-        for map_stat in data["maps_stats"]:
-            print(f"  - {map_stat['map_name']}")
+            print(f"\n=== Maps Stats ({len(data['maps_stats'])} maps) ===")
+            for map_stat in data["maps_stats"]:
+                print(f"  - {map_stat['map_name']}")
 
-        print(f"\n=== Player Stats ({len(data['players_stats'])} players) ===")
-        for player_stat in data["players_stats"]:
-            print(f"  - {player_stat['player_name']}")
+            print(f"\n=== Player Stats ({len(data['players_stats'])} players) ===")
+            for player_stat in data["players_stats"]:
+                print(f"  - {player_stat['player_name']}")
 
-        print("\nTask completed successfully!")
+            print("\nTask completed successfully!")
+
+        end = time.time()
+        print(f"\nTotal time taken: {end - start:.2f} seconds")
 
     except Exception as e:
         print(f"Error: {e}")
