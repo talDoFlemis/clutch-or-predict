@@ -12,9 +12,15 @@ async def create_page_pool(
     max_amount_of_concurrent_pages: int = 10,
     initial_page_size: int = 5,
     minimum_page_size: int = 5,
+    default_timeout: int = 10000,
 ):
     queue = asyncio.Queue(maxsize=max_amount_of_concurrent_pages)
-    [await queue.put(await browser.new_page()) for _ in range(initial_page_size)]
+    pages = [await browser.new_page() for _ in range(initial_page_size)]
+
+    for page in pages:
+        page.set_default_timeout(default_timeout)
+
+    [await queue.put(page) for page in pages]
 
     return PagePool(
         browser,
@@ -33,6 +39,7 @@ class PagePool:
         max_amount_of_concurrent_pages: int = 10,
         initial_page_size: int = 5,
         minimum_page_size: int = 5,
+        default_timeout: int = 5000,
     ):
         if initial_page_size > max_amount_of_concurrent_pages:
             raise ValueError(
@@ -52,6 +59,7 @@ class PagePool:
         self.pages = queue
         self.current_page_count = initial_page_size
         self._lock = asyncio.Lock()
+        self.default_timeout = default_timeout
 
     async def acquire(self) -> Page:
         assert self.pages.qsize() >= 0
@@ -84,6 +92,7 @@ class PagePool:
                     f"Pool empty, creating new page. Current count: {self.current_page_count}"
                 )
                 page = await self.browser.new_page()
+                page.set_default_timeout(self.default_timeout)
                 self.current_page_count += 1
                 logger.debug(
                     f"Created new page. Current count: {self.current_page_count}"
