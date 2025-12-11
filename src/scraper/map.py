@@ -2,7 +2,7 @@ from typing import List
 import re
 
 from scraper.models import MapStat
-from scraper.match import get_team_names
+from scraper.match import get_team_names, get_match_id
 import logging
 from patchright.async_api import Locator, Page
 import asyncio
@@ -20,12 +20,14 @@ def get_mapstatsid_from_url(url: str) -> str:
 
 
 async def get_map_stat(
+    match_id: str,
     map_locator: Locator,
     team_1_name: str,
-    team_2_name: str,
+    team_2_name: str
 ) -> MapStat | None:
     data_map = {}
 
+    data_map["match_id"] = match_id
     data_map["map_name"] = await map_locator.locator(".mapname").inner_text()
     logger.debug(f"Processing map '{data_map['map_name']}'")
 
@@ -122,6 +124,8 @@ async def get_maps_stats(
     url: str,
 ) -> List[MapStat]:
     await page.goto(url, wait_until="domcontentloaded")
+
+    match_id = await get_match_id(url)
     team_1_name, team_2_name = await get_team_names(page)
 
     maps_column_locator = page.locator(".maps .flexbox-column")
@@ -131,7 +135,7 @@ async def get_maps_stats(
     logger.debug(f"Found {len(maps)} maps")
 
     tasks = [
-        get_map_stat(map_locator, team_1_name, team_2_name) for map_locator in maps
+        get_map_stat(match_id, map_locator, team_1_name, team_2_name) for map_locator in maps
     ]
 
     stats = await asyncio.gather(*tasks)

@@ -95,7 +95,7 @@ async def __process_map(
 ) -> List[PlayerMapStat]:
     start = asyncio.get_event_loop().time()
 
-    await page.goto(map_stat_link)
+    await page.goto(map_stat_link, wait_until="domcontentloaded")
     map_stat_id = get_mapstatsid_from_url(map_stat_link)
     logger.debug(f"Processing map stats for map_stat_id: {map_stat_id}")
 
@@ -145,7 +145,7 @@ async def get_players_maps_stats(
     match_url: str,
 ) -> List[PlayerMapStat]:
     async with pool.get_page() as page:
-        await page.goto(match_url, wait_until="load")
+        await page.goto(match_url, wait_until="domcontentloaded")
         await page.get_by_role("link", name="Detailed Stats").click()
 
         is_best_of_1 = (

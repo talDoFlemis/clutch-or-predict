@@ -41,6 +41,7 @@ class Vetos(BaseModel):
 
 class MapStat(BaseModel):
     map_stat_id: str
+    match_id: str
     map_name: str
 
     team_1_score: int
