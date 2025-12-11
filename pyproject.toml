@@ -10,6 +10,7 @@ dependencies = [
   "flower>=2.0.1",
   "numpy>=2.3.5",
   "pandas>=2.3.3",
+  "parsel>=1.10.0",
   "patchright>=1.56.0",
   "pydantic>=2.12.5",
   "redis>=5.0.0",
