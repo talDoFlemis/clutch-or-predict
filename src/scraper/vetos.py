@@ -4,6 +4,7 @@ from scraper.match import get_match_id, get_team_names
 import logging
 from patchright.async_api import Page
 from typing import Dict, Any, Literal
+from parsel import Selector
 
 logger = logging.getLogger(__name__)
 
@@ -11,21 +12,34 @@ logger = logging.getLogger(__name__)
 async def get_vetos(page: Page, url: str) -> Vetos:
     await page.goto(url, wait_until="domcontentloaded")
     match_id = await get_match_id(url)
+
+    # Get HTML content and create parsel selector
+    html = await page.content()
+    selector = Selector(html)
+
     t1_name, t2_name = await get_team_names(page)
 
-    bo_locator = page.locator(".veto-box .padding").first
-    bo_text = await bo_locator.inner_text()
+    # Extract best of information
+    bo_text = selector.css(".veto-box .padding::text").get()
+    if not bo_text:
+        raise ValueError("Could not find best of text")
+
     bo_match = re.search(r"Best of (\d)", bo_text)
     best_of = int(bo_match.group(1)) if bo_match else 3
 
-    # 3. Initialize Vetos data structure
+    # Initialize Vetos data structure
     vetos_data: Dict[str, Any] = {"match_id": match_id, "best_of": best_of}
 
     logger.debug(f"Match ID: {match_id}, Best of: {best_of}")
 
-    # 4. Locate the map veto container
-    veto_box = page.locator(".veto-box .padding").nth(1)
-    veto_lines = await veto_box.locator("> div").all()
+    # Locate the map veto container (second .padding element within .veto-box)
+    veto_boxes = selector.css(".veto-box .padding")
+    if len(veto_boxes) < 2:
+        raise ValueError("Could not find veto box container")
+
+    # Get all direct child divs of the second .padding element
+    # Use xpath for direct child selector since CSS "> div" doesn't work with parsel
+    veto_lines = veto_boxes[1].xpath("./div")
 
     logger.debug(f"Found {len(veto_lines)} veto lines")
 
@@ -33,7 +47,8 @@ async def get_vetos(page: Page, url: str) -> Vetos:
     picked_index = 0
 
     for line in veto_lines:
-        line_text = await line.inner_text()
+        # Get all text content from the line
+        line_text = " ".join(line.css("::text").getall()).strip()
 
         logger.debug(f"Processing veto line text: '{line_text}'")
 
