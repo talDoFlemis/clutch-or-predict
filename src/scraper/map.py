@@ -2,10 +2,10 @@ from typing import List
 import re
 
 from scraper.models import MapStat
-from scraper.match import get_team_names, get_match_id
+from scraper.match import get_team_names_from_selector, get_match_id
 import logging
-from patchright.async_api import Locator, Page
-import asyncio
+from patchright.async_api import Page
+from parsel import Selector
 
 logger = logging.getLogger(__name__)
 
@@ -19,34 +19,32 @@ def get_mapstatsid_from_url(url: str) -> str:
     return match.group(1)
 
 
-async def get_map_stat(
-    match_id: str,
-    map_locator: Locator,
-    team_1_name: str,
-    team_2_name: str
+def get_map_stat(
+    match_id: str, map_selector: Selector, team_1_name: str, team_2_name: str
 ) -> MapStat | None:
     data_map = {}
 
     data_map["match_id"] = match_id
-    data_map["map_name"] = await map_locator.locator(".mapname").inner_text()
+    map_name = map_selector.css(".mapname::text").get()
+    if not map_name:
+        raise ValueError("Could not find map name")
+    data_map["map_name"] = map_name
     logger.debug(f"Processing map '{data_map['map_name']}'")
 
-    map_was_played = await map_locator.get_by_role("link").count() > 0
-    if not map_was_played:
+    # Check if map was played
+    map_link = map_selector.css("a::attr(href)").get()
+    if not map_link:
         logger.debug(f"Map '{data_map['map_name']}' was not played, skipping")
         return None
 
-    map_id_href = await map_locator.get_by_role("link").get_attribute("href")
-
-    data_map["map_stat_id"] = get_mapstatsid_from_url(map_id_href or "")
+    data_map["map_stat_id"] = get_mapstatsid_from_url(map_link)
     logger.debug(f"Map Stat ID: {data_map['map_stat_id']}")
 
-    won_locator = map_locator.locator(".won")
-    won_locator_class_attrs = (await won_locator.get_attribute("class")) or ""
-    won_on_left_side = True if "results-left" in won_locator_class_attrs else False
-    lost_locator = map_locator.locator(".lost")
+    # Get won/lost information
+    won_class = map_selector.css(".won::attr(class)").get() or ""
+    won_on_left_side = "results-left" in won_class
 
-    won_image_alt = await won_locator.get_by_role("img").get_attribute("alt")
+    won_image_alt = map_selector.css(".won img::attr(alt)").get()
     if won_image_alt is None:
         raise ValueError("Could not determine which team won the map")
 
@@ -64,46 +62,60 @@ async def get_map_stat(
     else:
         raise ValueError("Won team name does not match either team")
 
-    data_map[f"{won_prefix}_score"] = await won_locator.locator(
-        ".results-team-score"
-    ).inner_text()
-    data_map[f"{lost_prefix}_score"] = await lost_locator.locator(
-        ".results-team-score"
-    ).inner_text()
+    # Get scores
+    won_score = map_selector.css(".won .results-team-score::text").get()
+    lost_score = map_selector.css(".lost .results-team-score::text").get()
 
-    pick_locator = map_locator.locator(".pick")
-    is_leftover_pick = await pick_locator.count() == 0
-    pick_class_attrs = (
-        await pick_locator.get_attribute("class") if not is_leftover_pick else None
-    )
+    if not won_score or not lost_score:
+        raise ValueError("Could not find team scores")
+
+    data_map[f"{won_prefix}_score"] = won_score
+    data_map[f"{lost_prefix}_score"] = lost_score
+
+    # Get pick information
+    pick_class = map_selector.css(".pick::attr(class)").get()
     picked_by = "leftover"
 
-    if pick_class_attrs and "won" in pick_class_attrs:
+    if pick_class and "won" in pick_class:
         picked_by = won_prefix
-    elif pick_class_attrs and "lost" in pick_class_attrs:
+    elif pick_class and "lost" in pick_class:
         picked_by = lost_prefix
 
     data_map["picked_by"] = picked_by
 
-    results_center = map_locator.locator(".results-center .results-center-half-score")
-    results_center_spans = await results_center.locator("> span").all()
+    # Get CT/T scores
+    results_center_spans = map_selector.css(
+        ".results-center .results-center-half-score > span"
+    )
     logger.debug(f"Found {len(results_center_spans)} score spans in results center")
 
     if len(results_center_spans) != 10:
         raise ValueError("Unexpected number of score spans found")
 
-    first_half_left = results_center_spans[1]
-    starting_left_side_text = await first_half_left.get_attribute("class")
+    # Get class and text for each span
+    first_half_left_class = results_center_spans[1].xpath("@class").get() or ""
+    first_half_left_score = results_center_spans[1].xpath("text()").get()
+    first_half_right_score = results_center_spans[3].xpath("text()").get()
+    second_half_left_score = results_center_spans[5].xpath("text()").get()
+    second_half_right_score = results_center_spans[7].xpath("text()").get()
 
-    if starting_left_side_text is None:
-        raise ValueError("Could not determine starting CT team")
+    if not all(
+        [
+            first_half_left_score,
+            first_half_right_score,
+            second_half_left_score,
+            second_half_right_score,
+        ]
+    ):
+        raise ValueError("Could not extract all half scores")
 
-    first_half_left_score = await first_half_left.inner_text()
-    first_half_right_score = await results_center_spans[3].inner_text()
-    second_half_left_score = await results_center_spans[5].inner_text()
-    second_half_right_score = await results_center_spans[7].inner_text()
+    # Type narrowing - we know these are strings now
+    assert first_half_left_score is not None
+    assert first_half_right_score is not None
+    assert second_half_left_score is not None
+    assert second_half_right_score is not None
 
-    if "ct" in starting_left_side_text and won_on_left_side:
+    if "ct" in first_half_left_class and won_on_left_side:
         data_map["starting_ct"] = won_prefix
         data_map[f"{won_prefix}_ct_score"] = int(first_half_left_score)
         data_map[f"{won_prefix}_tr_score"] = int(second_half_left_score)
@@ -126,18 +138,21 @@ async def get_maps_stats(
     await page.goto(url, wait_until="domcontentloaded")
 
     match_id = await get_match_id(url)
-    team_1_name, team_2_name = await get_team_names(page)
 
-    maps_column_locator = page.locator(".maps .flexbox-column")
-    maps = await maps_column_locator.locator(
-        "> div",
-    ).all()
+    # Get HTML content and create parsel selector
+    html = await page.content()
+    selector = Selector(html)
+
+    team_1_name, team_2_name = get_team_names_from_selector(selector)
+
+    # Get all map divs
+    maps = selector.css(".maps .flexbox-column > div")
     logger.debug(f"Found {len(maps)} maps")
 
-    tasks = [
-        get_map_stat(match_id, map_locator, team_1_name, team_2_name) for map_locator in maps
-    ]
+    stats = []
+    for map_selector in maps:
+        stat = get_map_stat(match_id, map_selector, team_1_name, team_2_name)
+        if stat is not None:
+            stats.append(stat)
 
-    stats = await asyncio.gather(*tasks)
-
-    return [stat for stat in stats if stat is not None]
+    return stats
