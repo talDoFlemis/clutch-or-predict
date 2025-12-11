@@ -26,3 +26,4 @@ dev = [
 [project.scripts]
 scraper = "scraper:scrape"
 frontier = "scraper.frontier:main"
+browser = "scraper.browser:main"

@@ -47,15 +47,12 @@ async def process_players_stats(pool: PagePool, url: str):
 async def main():
     browser: None | BrowserContext = None
 
+    pool: None | PagePool = None
     async with async_playwright() as p:
         try:
-            browser = await p.chromium.launch_persistent_context(
-                user_data_dir="/tmp/playwright",
-                channel="chrome",
-                headless=False,
-                no_viewport=True,
-            )
-            url = bo5_match
+            b = await p.chromium.connect_over_cdp("http://localhost:9222")
+            browser = b.contexts[0]
+            url = bo1_match
 
             start = asyncio.get_event_loop().time()
             pool = await create_page_pool(browser)
@@ -68,6 +65,7 @@ async def main():
             ]
 
             await asyncio.gather(*tasks)
+            await pool.close_all_pages()
 
             end = asyncio.get_event_loop().time()
 
@@ -75,12 +73,17 @@ async def main():
                 f"Scraping completed in {end - start:.2f} seconds",
             )
 
+            await browser.close()
+            await b.close()
+
         except Exception as e:
             logger.exception(f"An error occurred: {e}")
 
         finally:
             if browser is not None:
                 await browser.close()
+            if pool is not None:
+                await pool.close_all_pages()
 
 
 def scrape():
