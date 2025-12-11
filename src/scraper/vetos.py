@@ -1,6 +1,6 @@
 import re
 from scraper.models import Vetos
-from scraper.match import get_match_id, get_team_names
+from scraper.match import get_match_id, get_team_names_from_selector
 import logging
 from patchright.async_api import Page
 from typing import Dict, Any, Literal
@@ -17,7 +17,7 @@ async def get_vetos(page: Page, url: str) -> Vetos:
     html = await page.content()
     selector = Selector(html)
 
-    t1_name, t2_name = await get_team_names(page)
+    t1_name, t2_name = get_team_names_from_selector(selector)
 
     # Extract best of information
     bo_text = selector.css(".veto-box .padding::text").get()
