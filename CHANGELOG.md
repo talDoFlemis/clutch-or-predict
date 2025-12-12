@@ -1,3 +1,19 @@
+## [1.1.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.0.2...v1.1.0) (2025-12-12)
+
+### Features
+
+* add psycopg and psycopgpool ([a961ea6](https://github.com/talDoFlemis/clutch-or-predict/commit/a961ea6dee42268c3902ea6aa17c5a5feff21ca2))
+* insert data from celery ([3f52690](https://github.com/talDoFlemis/clutch-or-predict/commit/3f526903150231ce432bff3f20739d8a82545203))
+* make frontier use new redis ([82c3dbd](https://github.com/talDoFlemis/clutch-or-predict/commit/82c3dbdb8d62f52196cc591b5ed155f766ff8262))
+
+### Bug Fixes
+
+* **player:** break when kast is 0 ([00d6ab5](https://github.com/talDoFlemis/clutch-or-predict/commit/00d6ab5edbbe27402332d2371e9ab9fbf6339b39))
+
+### Code Refactoring
+
+* **migrations:** use psycopg3 ([5203cbf](https://github.com/talDoFlemis/clutch-or-predict/commit/5203cbfa0d3605911d9d2f02b6cd68f1f7877da6))
+
 ## [1.0.2](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.0.1...v1.0.2) (2025-12-12)
 
 ### Bug Fixes
