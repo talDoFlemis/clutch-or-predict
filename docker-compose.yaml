@@ -36,7 +36,7 @@ services:
       - redis
       - db
     environment:
-      SCRAPER_REDIS__HOST: redis
+      SCRAPER_REDIS__HOST: "[2804:1a04:807d:8b00:be24:11ff:fe8b:e582]"
       SCRAPER_REDIS__PASSWORD: senha
       SCRAPER_CELERY__WORKER_CONCURRENCY: 10
       SCRAPER_CELERY__WORKER_LOG_LEVEL: "DEBUG"

@@ -101,6 +101,7 @@ class PagePool:
             self.current_page_count -= 1
             return
 
+        await page.goto("about:blank")
         await self.pages.put(page)
         logger.debug(f"Page returned to pool. Current pool size: {self.pages.qsize()}")
 

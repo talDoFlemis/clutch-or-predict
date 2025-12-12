@@ -6,7 +6,7 @@ Usage:
 """
 
 import time
-from scraper.celery import match_result, vetos, maps, player_stats
+from scraper.celery import full_match
 
 bo1_match = "https://www.hltv.org/matches/2388622/wild-vs-sentinels-digital-warriors-fall-cup-2025"
 bo3_match = "https://www.hltv.org/matches/2388119/g2-vs-the-mongolz-starladder-budapest-major-2025"
@@ -20,14 +20,11 @@ def main():
 
     # Send task to Celery
     start = time.time()
-    matches = [bo1_match, bo3_match, bo5_match]
+    matches = [bo1_match]
     results = []
 
     for match in matches:
-        results.append(match_result.delay(match))  # type: ignore
-        results.append(vetos.delay(match))  # type: ignore
-        results.append(maps.delay(match))  # type: ignore
-        results.append(player_stats.delay(match))  # type: ignore
+        results.append(full_match.delay(match))  # type: ignore
 
     print("Waiting for result...")
 
