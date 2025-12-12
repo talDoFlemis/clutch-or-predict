@@ -47,6 +47,16 @@ def get_broker_url() -> str:
     return f"redis://{auth}{host}:{port}/{db}"
 
 
+def get_celery_worker_concurrency() -> int:
+    """Get the number of concurrent worker processes/threads."""
+    return settings.get("celery.worker_concurrency", 4)
+
+
+def get_celery_worker_log_level() -> str:
+    """Get the worker log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)."""
+    return settings.get("celery.worker_log_level", "INFO")
+
+
 def get_page_pool_max_amount() -> int:
     """Get the maximum amount of concurrent pages for the page pool."""
     return settings.get("page_pool.max_amount", 30)

@@ -10,6 +10,11 @@ default:
     port: 6379
     db: 0
   
+  # Celery Worker Configuration
+  celery:
+    worker_concurrency: 4  # Number of concurrent worker processes/threads
+    worker_log_level: "INFO"  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  
   # Page Pool Configuration
   page_pool:
     max_amount: 30

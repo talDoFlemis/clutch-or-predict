@@ -11,6 +11,8 @@ from scraper.map import get_maps_stats
 from scraper.player import get_players_maps_stats
 from scraper.config import (
     get_broker_url,
+    get_celery_worker_concurrency,
+    get_celery_worker_log_level,
     get_page_pool_max_amount,
     get_page_pool_initial_size,
     get_page_pool_minimum_amount,
@@ -51,6 +53,8 @@ app.conf.update(
     result_serializer="json",
     timezone="UTC",
     enable_utc=True,
+    worker_concurrency=get_celery_worker_concurrency(),
+    worker_log_level=get_celery_worker_log_level(),
 )
 
 
