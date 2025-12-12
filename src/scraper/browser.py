@@ -44,7 +44,9 @@ async def start_browser():
             )
 
             logger.info("Browser launched successfully!")
-            logger.info(f"Remote debugging available at http://{debug_address}:{debug_port}")
+            logger.info(
+                f"Remote debugging available at http://{debug_address}:{debug_port}"
+            )
             logger.info("Press Ctrl+C to stop the browser server")
             sys.stdout.flush()
 

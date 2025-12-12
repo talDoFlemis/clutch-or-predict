@@ -9,34 +9,32 @@ default:
     host: "localhost"
     port: 6379
     db: 0
-  
+
   # Celery Worker Configuration
   celery:
-    worker_concurrency: 4  # Number of concurrent worker processes/threads
-    worker_log_level: "INFO"  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
-  
+    worker_concurrency: 5 # Number of concurrent worker processes/threads
+    worker_log_level: "DEBUG" # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+
   # Page Pool Configuration
   page_pool:
     max_amount: 30
     initial_size: 30
     minimum_amount: 30
-    default_timeout: 30000  # milliseconds
-  
+    default_timeout: 30000 # milliseconds
+
   # Browser Configuration
   # Set use_cdp to true to connect to a remote browser via Chrome DevTools Protocol
   # Set use_cdp to false to launch a persistent browser context locally
   browser:
-    use_cdp: false
-    cdp_url: "http://localhost:9222"
+    use_cdp: true
     # Persistent context settings (used when use_cdp = false)
     user_data_dir: "/tmp/playwright"
     channel: "chrome"
     headless: false
     no_viewport: true
-    # Browser server debug settings
+    # Browser server debug settings (used for CDP connection)
     debug_port: 9222
     debug_address: "127.0.0.1"
-
 # Override settings using environment variables with SCRAPER_ prefix:
 # export SCRAPER_REDIS__PASSWORD="your_password"
 # export SCRAPER_REDIS__HOST="redis.example.com"

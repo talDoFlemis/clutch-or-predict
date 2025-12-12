@@ -1,5 +1,7 @@
 import asyncio
+import ipaddress
 import logging
+import socket
 import threading
 from celery import Celery, signals
 from patchright.async_api import BrowserContext, async_playwright, Playwright
@@ -18,15 +20,26 @@ from scraper.config import (
     get_page_pool_minimum_amount,
     get_page_pool_default_timeout,
     get_browser_use_cdp,
-    get_browser_cdp_url,
     get_browser_user_data_dir,
     get_browser_channel,
     get_browser_headless,
     get_browser_no_viewport,
+    get_debug_port,
+    get_debug_address,
 )
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+
+def is_ip_address(address: str) -> bool:
+    """Check if the given string is a valid IP address."""
+    try:
+        ipaddress.ip_address(address)
+        return True
+    except ValueError:
+        return False
+
 
 # Global variables
 browser: None | BrowserContext = None
@@ -107,7 +120,22 @@ def ensure_initialized():
 
                 if use_cdp:
                     # Connect to remote browser via CDP
-                    cdp_url = get_browser_cdp_url()
+                    # Resolve hostname to IP address (CDP requires IP or localhost)
+                    debug_address = get_debug_address()
+                    debug_port = get_debug_port()
+
+                    # Resolve hostname to IP if not already an IP address
+                    if not is_ip_address(debug_address):
+                        try:
+                            resolved_ip = socket.gethostbyname(debug_address)
+                            logger.debug(f"Resolved {debug_address} to {resolved_ip}")
+                            debug_address = resolved_ip
+                        except socket.gaierror as e:
+                            logger.warning(
+                                f"Failed to resolve {debug_address}: {e}, using as-is"
+                            )
+
+                    cdp_url = f"http://{debug_address}:{debug_port}"
                     logger.debug(
                         f"Connecting to remote browser via CDP at {cdp_url}..."
                     )

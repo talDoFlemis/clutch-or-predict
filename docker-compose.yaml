@@ -15,13 +15,34 @@ services:
     image: ghcr.io/taldoflemis/clutch-or-predict/browser
     ports:
       - 9222:9222
+    environment:
+      # Socat to forward the debug port on port 9222
+      SCRAPER_BROWSER__DEBUG_PORT: 9223
+      SCRAPER_BROWSER__DEBUG_ADDRESS: 0.0.0.0
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:9222"]
+      test: ["CMD", "curl", "--fail", "http://localhost:9222/json/version"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 15s
       start_interval: 1s
+
+  worker:
+    build:
+      context: ./
+      dockerfile: ./docker/celery-worker.Dockerfile
+    image: ghcr.io/taldoflemis/clutch-or-predict/celery-worker
+    depends_on:
+      - redis
+      - db
+    environment:
+      SCRAPER_REDIS__HOST: redis
+      SCRAPER_REDIS__PASSWORD: senha
+      SCRAPER_CELERY__WORKER_CONCURRENCY: 10
+      SCRAPER_CELERY__WORKER_LOG_LEVEL: "DEBUG"
+      SCRAPER_BROWSER__USE_CDP: true
+      SCRAPER_BROWSER__DEBUG_PORT: 9222
+      SCRAPER_BROWSER__DEBUG_ADDRESS: browser
 
   redis-insight:
     image: redis/redisinsight:latest

@@ -54,7 +54,7 @@ def get_celery_worker_concurrency() -> int:
 
 def get_celery_worker_log_level() -> str:
     """Get the worker log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)."""
-    return settings.get("celery.worker_log_level", "INFO")
+    return settings.get("celery.worker_log_level", "DEBUG")
 
 
 def get_page_pool_max_amount() -> int:
@@ -80,11 +80,6 @@ def get_page_pool_default_timeout() -> int:
 def get_browser_use_cdp() -> bool:
     """Get whether to use CDP to connect to a remote browser."""
     return settings.get("browser.use_cdp", False)
-
-
-def get_browser_cdp_url() -> str:
-    """Get the CDP endpoint URL for remote browser connection."""
-    return settings.get("browser.cdp_url", "http://localhost:9222")
 
 
 def get_browser_user_data_dir() -> str:
@@ -115,4 +110,3 @@ def get_debug_port() -> int:
 def get_debug_address() -> str:
     """Get the Chrome remote debugging address."""
     return settings.get("browser.debug_address", "127.0.0.1")
-
