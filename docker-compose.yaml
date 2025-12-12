@@ -6,6 +6,15 @@ services:
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes --requirepass senha
+
+  browser:
+    build:
+      context: .
+      dockerfile: ./docker/browser.Dockerfile
+    image: ghcr.io/taldoflemis/clutch-or-predict/browser
+    ports:
+      - 9222:9222
+
   redis-insight:
     image: redis/redisinsight:latest
     container_name: redis-insight

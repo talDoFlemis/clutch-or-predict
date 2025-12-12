@@ -21,3 +21,13 @@ tasks:
     desc: Start Flower monitoring tool
     cmds:
       - uv run celery -A scraper.tasks flower --port=5555
+
+  scrape:simple:
+    desc: Run the simple example scraper
+    cmds:
+      - uv run python examples/simple_example.py
+
+  scrape:browser:
+    desc: Run the browser example scraper
+    cmds:
+      - uv run browser

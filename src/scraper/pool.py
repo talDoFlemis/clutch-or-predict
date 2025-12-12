@@ -116,3 +116,13 @@ class PagePool:
         finally:
             if page is not None:
                 await self.release(page)
+
+    async def close_all_pages(self):
+        logger.info("Closing all pages in the pool...")
+        while not self.pages.empty():
+            page = await self.pages.get()
+            await page.close()
+            self.current_page_count -= 1
+            logger.debug("Closed a page from the pool.")
+
+        logger.info("All pages in the pool have been closed.")
