@@ -52,7 +52,7 @@ def process_row(
     kast = row_selector.css(".st-kast.traditional-data::text").get()
     if not kast:
         raise ValueError("KAST not found")
-    data_map[f"kast{suffix}"] = float(kast.replace("%", ""))
+    data_map[f"kast{suffix}"] = float(kast.replace("%", "").replace("-", "0"))
 
     # Clutches
     clutches = row_selector.css(".st-clutches::text").get()
