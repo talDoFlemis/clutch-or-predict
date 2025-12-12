@@ -1,3 +1,9 @@
+## [1.0.2](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.0.1...v1.0.2) (2025-12-12)
+
+### Bug Fixes
+
+* **release:** remove arm from browser ([2e19ff9](https://github.com/talDoFlemis/clutch-or-predict/commit/2e19ff9a325a8c192b472aafb650179c147cb7cc))
+
 ## [1.0.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.0.0...v1.0.1) (2025-12-12)
 
 ### Bug Fixes
