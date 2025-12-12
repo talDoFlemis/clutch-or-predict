@@ -4,6 +4,8 @@ import logging
 from typing import List
 from datetime import datetime
 
+from db.config import get_connection_params
+
 logger = logging.getLogger(__name__)
 
 
@@ -16,20 +18,24 @@ class Migration:
 
 
 class MigrationManager:
-    def __init__(
-        self,
-        host: str = "localhost",
-        port: int = 5432,
-        database: str = "cs2_stats",
-        user: str = "marcelinho",
-        password: str = "molodoy",
-    ):
+    def __init__(self, connection_params: dict | None = None):
+        """
+        Initialize the migration manager.
+
+        Args:
+            connection_params: Optional dict with connection parameters.
+                             If None, uses config from db.config module.
+        """
+        if connection_params is None:
+            connection_params = get_connection_params()
+
+        # psycopg2 uses 'database' instead of 'dbname'
         self.connection_params = {
-            "host": host,
-            "port": port,
-            "database": database,
-            "user": user,
-            "password": password,
+            "host": connection_params.get("host", "localhost"),
+            "port": connection_params.get("port", 5432),
+            "database": connection_params.get("dbname", "postgres"),
+            "user": connection_params.get("user", "postgres"),
+            "password": connection_params.get("password", ""),
         }
         self.migrations: List[Migration] = []
 
