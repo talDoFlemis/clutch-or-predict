@@ -1,8 +1,6 @@
-import psycopg2
-from psycopg2 import sql
+import psycopg
 import logging
-from typing import List
-from datetime import datetime
+from typing import List, cast, LiteralString
 
 from db.config import get_connection_params
 
@@ -29,18 +27,19 @@ class MigrationManager:
         if connection_params is None:
             connection_params = get_connection_params()
 
-        # psycopg2 uses 'database' instead of 'dbname'
-        self.connection_params = {
-            "host": connection_params.get("host", "localhost"),
-            "port": connection_params.get("port", 5432),
-            "database": connection_params.get("dbname", "postgres"),
-            "user": connection_params.get("user", "postgres"),
-            "password": connection_params.get("password", ""),
-        }
+        # Build connection string for psycopg3
+        self.conninfo = (
+            f"host={connection_params.get('host', 'localhost')} "
+            f"port={connection_params.get('port', 5432)} "
+            f"user={connection_params.get('user', 'postgres')} "
+            f"password={connection_params.get('password', '')} "
+            f"dbname={connection_params.get('dbname', 'postgres')} "
+            f"sslmode={connection_params.get('sslmode', 'prefer')}"
+        )
         self.migrations: List[Migration] = []
 
     def get_connection(self):
-        return psycopg2.connect(**self.connection_params)
+        return psycopg.connect(self.conninfo)
 
     def register_migration(self, migration: Migration):
         self.migrations.append(migration)
@@ -50,8 +49,8 @@ class MigrationManager:
             try:
                 with self.get_connection() as conn:
                     with conn.cursor() as cursor:
-                        cursor.execute(migration.up_sql)
-                        conn.commit()
+                        cursor.execute(cast(LiteralString, migration.up_sql))
+                    conn.commit()
                 logger.info(f"✓ Migration {migration.version} applied successfully")
             except Exception as e:
                 logger.error(f"✗ Migration {migration.version} failed: {e}")
