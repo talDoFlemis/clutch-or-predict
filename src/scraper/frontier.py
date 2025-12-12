@@ -4,11 +4,12 @@ from urllib.parse import urlencode
 import logging
 import asyncio
 from patchright.async_api import async_playwright, Page
-from scraper.tasks import match_result, player_stats, vetos, maps
+from scraper.celery import full_match
 
 import redis
 
 from scraper.pool import create_page_pool
+from scraper.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -17,18 +18,18 @@ class HLTVFrontier:
     BASE_URL = "https://www.hltv.org/results"
     VISITED_SET_KEY = "hltv:visited_urls"
 
-    def __init__(
-        self,
-        redis_host: str = "localhost",
-        redis_port: int = 6379,
-        redis_password: Optional[str] = None,
-        redis_db: int = 0,
-    ):
+    def __init__(self):
+        # Get Redis configuration from dynaconf settings
+        host = "2804:1a04:807d:8b00:be24:11ff:fe85:e66b"
+        port = settings.get("redis.port", 6379)
+        password = settings.get("redis.password", "")
+        db = settings.get("redis.db", 0)
+
         self.redis_client = redis.Redis(
-            host=redis_host,
-            port=redis_port,
-            password=redis_password,
-            db=redis_db,
+            host=host,
+            port=port,
+            password=password if password else None,
+            db=db,
             decode_responses=True,
         )
 
@@ -107,10 +108,7 @@ async def __parse_links_on_page(page: Page):
         if href is not None:
             full_url = f"https://www.hltv.org{href}"
             logger.info(f"Match URL: {full_url}")
-            match_result.delay(full_url)  # type: ignore
-            maps.delay(full_url)  # type: ignore
-            vetos.delay(full_url)  # type: ignore
-            player_stats.delay(full_url)  # type: ignore
+            full_match.delay(full_url)  # type: ignore
             amount_of_links += 1
 
     logger.info(f"Found {amount_of_links} match links on the page.")
@@ -154,11 +152,7 @@ async def run_frontier(
                 async with pool.get_page() as page:
                     await __parse_results_page(page, url)
 
-            with HLTVFrontier(
-                redis_host=args.redis_host,
-                redis_port=args.redis_port,
-                redis_password=args.redis_password,
-            ) as frontier:
+            with HLTVFrontier() as frontier:
                 if args.clear_visited:
                     frontier.clear_visited()
 
