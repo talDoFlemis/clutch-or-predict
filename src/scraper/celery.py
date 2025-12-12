@@ -9,6 +9,19 @@ from scraper.match import get_match_result
 from scraper.vetos import get_vetos
 from scraper.map import get_maps_stats
 from scraper.player import get_players_maps_stats
+from scraper.config import (
+    get_broker_url,
+    get_page_pool_max_amount,
+    get_page_pool_initial_size,
+    get_page_pool_minimum_amount,
+    get_page_pool_default_timeout,
+    get_browser_use_cdp,
+    get_browser_cdp_url,
+    get_browser_user_data_dir,
+    get_browser_channel,
+    get_browser_headless,
+    get_browser_no_viewport,
+)
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -24,12 +37,15 @@ loop_thread: None | threading.Thread = None
 _init_lock = threading.Lock()
 _is_initialized = False
 
+# Get broker URL from config
+broker_url = get_broker_url()
+
 app = Celery(
     "clutch_or_predict",
-    broker="redis://:senha@localhost:6379/0",
+    broker=broker_url,
 )
 app.conf.update(
-    result_backend="redis://:senha@localhost:6379/0",
+    result_backend=broker_url,
     task_serializer="json",
     accept_content=["json"],
     result_serializer="json",
@@ -83,21 +99,40 @@ def ensure_initialized():
                 logger.debug("Starting Playwright...")
                 playwright_instance = await async_playwright().start()
 
-                logger.debug("Launching Persistent Context...")
-                browser = await playwright_instance.chromium.launch_persistent_context(
-                    user_data_dir="/tmp/playwright",
-                    channel="chrome",
-                    headless=False,
-                    no_viewport=True,
-                    args=["--no-sandbox", "--disable-setuid-sandbox"],
-                )
+                use_cdp = get_browser_use_cdp()
+
+                if use_cdp:
+                    # Connect to remote browser via CDP
+                    cdp_url = get_browser_cdp_url()
+                    logger.debug(
+                        f"Connecting to remote browser via CDP at {cdp_url}..."
+                    )
+                    browser_server = (
+                        await playwright_instance.chromium.connect_over_cdp(cdp_url)
+                    )
+                    browser = browser_server.contexts[0]
+                    logger.debug("Connected to remote browser successfully")
+                else:
+                    # Launch persistent context locally
+                    logger.debug("Launching Persistent Context...")
+                    browser = (
+                        await playwright_instance.chromium.launch_persistent_context(
+                            user_data_dir=get_browser_user_data_dir(),
+                            channel=get_browser_channel(),
+                            headless=get_browser_headless(),
+                            no_viewport=get_browser_no_viewport(),
+                            args=["--no-sandbox", "--disable-setuid-sandbox"],
+                        )
+                    )
+                    logger.debug("Persistent context launched successfully")
 
                 logger.debug("Creating Page Pool...")
                 page_pool = await create_page_pool(
                     browser,
-                    max_amount_of_concurrent_pages=30,
-                    initial_page_size=30,
-                    minimum_page_size=30,
+                    max_amount_of_concurrent_pages=get_page_pool_max_amount(),
+                    initial_page_size=get_page_pool_initial_size(),
+                    minimum_page_size=get_page_pool_minimum_amount(),
+                    default_timeout=get_page_pool_default_timeout(),
                 )
 
             # 3. Run setup on the background loop and wait for result

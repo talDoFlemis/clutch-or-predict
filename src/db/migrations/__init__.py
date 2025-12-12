@@ -33,14 +33,11 @@ class MigrationManager:
         }
         self.migrations: List[Migration] = []
 
-
     def get_connection(self):
         return psycopg2.connect(**self.connection_params)
 
-
     def register_migration(self, migration: Migration):
         self.migrations.append(migration)
-
 
     def migrate(self):
         for migration in self.migrations:
@@ -152,7 +149,7 @@ def setup_migrations() -> MigrationManager:
                 swing_tr DECIMAL(6, 2),
                 rating_3_dot_0_tr DECIMAL(5, 2)
             );
-            """
+            """,
         )
     )
 
