@@ -6,7 +6,7 @@ Usage:
 """
 
 import time
-from scraper.tasks import match_result, vetos, maps, player_stats
+from scraper.celery import match_result, vetos, maps, player_stats
 
 bo1_match = "https://www.hltv.org/matches/2388622/wild-vs-sentinels-digital-warriors-fall-cup-2025"
 bo3_match = "https://www.hltv.org/matches/2388119/g2-vs-the-mongolz-starladder-budapest-major-2025"

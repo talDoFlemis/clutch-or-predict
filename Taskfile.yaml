@@ -15,12 +15,12 @@ tasks:
   celery:worker:
     desc: Start Celery worker
     cmds:
-      - uv run celery -A scraper.tasks worker --loglevel=debug --concurrency=5 --pool=threads
+      - uv run celery -A scraper.celery worker --loglevel=debug --concurrency=5 --pool=threads
 
   celery:flower:
     desc: Start Flower monitoring tool
     cmds:
-      - uv run celery -A scraper.tasks flower --port=5555
+      - uv run celery -A scraper.celery flower --port=5555
 
   scrape:simple:
     desc: Run the simple example scraper
