@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.0.0...v1.0.1) (2025-12-12)
+
+### Bug Fixes
+
+* **release:** bad dockerfile for worker ([8607b30](https://github.com/talDoFlemis/clutch-or-predict/commit/8607b30b7d8a471c57ddd8f9a36c718fea0eeed0))
+
 ## 1.0.0 (2025-12-12)
 
 ### Features
