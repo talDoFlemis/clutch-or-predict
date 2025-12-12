@@ -89,8 +89,13 @@ def get_map_stat(
     )
     logger.debug(f"Found {len(results_center_spans)} score spans in results center")
 
-    if len(results_center_spans) != 10:
+    if len(results_center_spans) != 10 and len(results_center_spans) != 15:
         raise ValueError("Unexpected number of score spans found")
+
+    is_overtime = False
+    if len(results_center_spans) == 15:
+        is_overtime = True
+        logger.debug("Overtime detected, extracting regular time scores only")
 
     # Get class and text for each span
     first_half_left_class = results_center_spans[1].xpath("@class").get() or ""
