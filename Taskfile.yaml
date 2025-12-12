@@ -31,3 +31,8 @@ tasks:
     desc: Run the browser example scraper
     cmds:
       - uv run browser
+
+  scrape:docker:
+    desc: Run the scraper in docker
+    cmds:
+      - docker compose up

@@ -20,11 +20,10 @@ dependencies = [
 package = true
 
 [dependency-groups]
-dev = [
-    "ruff>=0.14.8",
-]
+dev = ["ruff>=0.14.8"]
 
 [project.scripts]
 scraper = "scraper:scrape"
 frontier = "scraper.frontier:main"
 migrate = "db.migrations:main"
+browser = "scraper.browser:main"
