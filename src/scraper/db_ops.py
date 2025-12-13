@@ -87,8 +87,9 @@ async def insert_map_stats(conn: AsyncConnection, map_stats: List[MapStat]) -> N
             """INSERT INTO map_stats 
                 (map_stat_id, match_id, map_name, team_1_score, team_2_score, 
                  team_1_ct_score, team_1_tr_score, team_2_ct_score, team_2_tr_score, 
-                 picked_by, starting_ct) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                 picked_by, starting_ct, team_1_overtime_score, team_2_overtime_score
+                 ) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (map_stat_id) DO NOTHING
             """,
             (
@@ -103,6 +104,8 @@ async def insert_map_stats(conn: AsyncConnection, map_stats: List[MapStat]) -> N
                 map_stat.team_2_tr_score,
                 map_stat.picked_by,
                 map_stat.starting_ct,
+                map_stat.team_1_overtime_score,
+                map_stat.team_2_overtime_score,
             ),
         )
 

@@ -92,11 +92,6 @@ def get_map_stat(
     if len(results_center_spans) != 10 and len(results_center_spans) != 15:
         raise ValueError("Unexpected number of score spans found")
 
-    is_overtime = False
-    if len(results_center_spans) == 15:
-        is_overtime = True
-        logger.debug("Overtime detected, extracting regular time scores only")
-
     # Get class and text for each span
     first_half_left_class = results_center_spans[1].xpath("@class").get() or ""
     first_half_left_score = results_center_spans[1].xpath("text()").get()
@@ -114,6 +109,11 @@ def get_map_stat(
     ):
         raise ValueError("Could not extract all half scores")
 
+    has_overtime = False
+    if len(results_center_spans) == 15:
+        has_overtime = True
+        logger.debug("Overtime detected, extracting regular time scores only")
+
     # Type narrowing - we know these are strings now
     assert first_half_left_score is not None
     assert first_half_right_score is not None
@@ -126,12 +126,30 @@ def get_map_stat(
         data_map[f"{won_prefix}_tr_score"] = int(second_half_left_score)
         data_map[f"{lost_prefix}_ct_score"] = int(first_half_right_score)
         data_map[f"{lost_prefix}_tr_score"] = int(second_half_right_score)
+        if has_overtime:
+            won_overtime = results_center_spans[11].xpath("text()").get()
+            data_map[f"{won_prefix}_overtime_score"] = int(
+                won_overtime if won_overtime else 0
+            )
+            lost_overtime = results_center_spans[13].xpath("text()").get()
+            data_map[f"{lost_prefix}_overtime_score"] = int(
+                lost_overtime if lost_overtime else 0
+            )
     else:
         data_map["starting_ct"] = lost_prefix
         data_map[f"{lost_prefix}_ct_score"] = int(first_half_left_score)
         data_map[f"{lost_prefix}_tr_score"] = int(second_half_left_score)
         data_map[f"{won_prefix}_ct_score"] = int(first_half_right_score)
         data_map[f"{won_prefix}_tr_score"] = int(second_half_right_score)
+        if has_overtime:
+            lost_overtime = results_center_spans[11].xpath("text()").get()
+            data_map[f"{lost_prefix}_overtime_score"] = int(
+                lost_overtime if lost_overtime else 0
+            )
+            won_overtime = results_center_spans[13].xpath("text()").get()
+            data_map[f"{won_prefix}_overtime_score"] = int(
+                won_overtime if won_overtime else 0
+            )
 
     return MapStat(**data_map)
 

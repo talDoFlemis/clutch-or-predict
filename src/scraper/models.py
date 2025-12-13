@@ -47,10 +47,12 @@ class MapStat(BaseModel):
     team_1_score: int
     team_1_ct_score: int
     team_1_tr_score: int
+    team_1_overtime_score: int | None = None
 
     team_2_score: int
     team_2_ct_score: int
     team_2_tr_score: int
+    team_2_overtime_score: int | None = None
 
     picked_by: Literal["team_1", "team_2", "leftover"]
 
