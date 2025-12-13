@@ -20,7 +20,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
   uv sync --locked --no-editable
 
 
-FROM cgr.dev/chainguard/python:latest
+FROM cgr.dev/chainguard/python:latest-dev
 
 WORKDIR /app
 
