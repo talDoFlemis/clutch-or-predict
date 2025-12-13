@@ -20,7 +20,7 @@ settings = Dynaconf(
 )
 
 
-def get_database_url() -> str:
+def get_database_url(make_ipv6_in_bracket: bool = False) -> str:
     """
     Build the PostgreSQL database URL from configuration.
 
@@ -39,6 +39,10 @@ def get_database_url() -> str:
     auth = f"{user}"
     if password:
         auth = f"{user}:{password}"
+
+    if make_ipv6_in_bracket and ":" in host:
+        # If the host contains a colon, wrap it in brackets for IPv6 compatibility
+        host = f"[{host}]"
 
     return f"postgresql://{auth}@{host}:{port}/{dbname}?sslmode={sslmode}"
 
