@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Clean up any stale X server lock files
+rm -f /tmp/.X99-lock /tmp/.X11-unix/X99
+
 # Start Xvfb in the background
 export DISPLAY=:99
 Xvfb :99 -screen 0 1920x1080x24 &
