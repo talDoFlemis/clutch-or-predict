@@ -98,7 +98,7 @@ class HLTVFrontier:
         self.close()
 
 
-async def __parse_links_on_page(page: Page):
+async def __parse_links_on_page(page: Page, frontier: HLTVFrontier):
     links_locator = await page.locator(".result-con .a-reset").all()
 
     amount_of_links = 0
@@ -107,17 +107,21 @@ async def __parse_links_on_page(page: Page):
         href = await link_locator.get_attribute("href")
         if href is not None:
             full_url = f"https://www.hltv.org{href}"
-            logger.info(f"Match URL: {full_url}")
-            full_match.delay(full_url)  # type: ignore
-            amount_of_links += 1
+            if not frontier.is_visited(full_url):
+                logger.info(f"Match URL: {full_url}")
+                frontier.mark_visited(full_url)
+                full_match.delay(full_url)  # type: ignore
+                amount_of_links += 1
+            else:
+                logger.info(f"Skipping already visited match URL: {full_url}")
 
-    logger.info(f"Found {amount_of_links} match links on the page.")
+    logger.info(f"Found {amount_of_links} new match links on the page.")
 
 
-async def __parse_results_page(page: Page, url: str) -> None:
+async def __parse_results_page(page: Page, url: str, frontier: HLTVFrontier) -> None:
     logger.info(f"Parsing results page: {url}")
     await page.goto(url)
-    await __parse_links_on_page(page)
+    await __parse_links_on_page(page, frontier)
 
     pagination_next_locator = page.locator(".results .pagination-next").first
     pagination_next_class = await pagination_next_locator.get_attribute("class")
@@ -126,7 +130,7 @@ async def __parse_results_page(page: Page, url: str) -> None:
         await pagination_next_locator.click()
         pagination_next_locator = page.locator(".results .pagination-next").first
         pagination_next_class = await pagination_next_locator.get_attribute("class")
-        await __parse_links_on_page(page)
+        await __parse_links_on_page(page, frontier)
 
     logger.info(f"Finished parsing results page: {url}")
 
@@ -148,13 +152,13 @@ async def run_frontier(
                 browser, max_amount_of_concurrent_pages=1, initial_page_size=1
             )
 
-            async def parser(url: str) -> None:
-                async with pool.get_page() as page:
-                    await __parse_results_page(page, url)
-
             with HLTVFrontier() as frontier:
                 if args.clear_visited:
                     frontier.clear_visited()
+
+                async def parser(url: str) -> None:
+                    async with pool.get_page() as page:
+                        await __parse_results_page(page, url, frontier)
 
                 await frontier.crawl(
                     parser=parser,
