@@ -1,3 +1,9 @@
+## [1.4.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.4.0...v1.4.1) (2025-12-13)
+
+### Bug Fixes
+
+* **browser-entrypoint:** cleanup xserver at startup ([2ecc061](https://github.com/talDoFlemis/clutch-or-predict/commit/2ecc0612960df10aff1a36260a2ff3fae06039ca))
+
 ## [1.4.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.3.0...v1.4.0) (2025-12-13)
 
 ### Features
