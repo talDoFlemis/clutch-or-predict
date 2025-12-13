@@ -25,3 +25,4 @@ trap "kill $BROWSER_PID $SOCAT_PID $XVFB_PID 2>/dev/null; exit" SIGTERM SIGINT
 
 # Wait for browser process
 wait $BROWSER_PID
+rm -rf /tmp/.X99-lock
