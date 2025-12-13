@@ -65,34 +65,34 @@ def setup_migrations() -> MigrationManager:
             name="create_base_tables",
             up_sql="""
             CREATE TABLE events (
-                event_id VARCHAR(255) PRIMARY KEY,
+                event_id SERIAL PRIMARY KEY,
                 name VARCHAR(255) NOT NULL
             );
 
             CREATE TABLE teams (
-                team_id VARCHAR(255) PRIMARY KEY,
+                team_id SERIAL PRIMARY KEY,
                 name VARCHAR(255) NOT NULL
             );
 
             CREATE TABLE players (
-                player_id VARCHAR(255) PRIMARY KEY,
+                player_id SERIAL PRIMARY KEY,
                 name VARCHAR(255) NOT NULL
             );
 
             CREATE TABLE matches (
-                match_id VARCHAR(255) PRIMARY KEY,
-                event_id VARCHAR(255) REFERENCES events(event_id),
+                match_id SERIAL PRIMARY KEY,
+                event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
                 match_date TIMESTAMP WITH TIME ZONE NOT NULL,
-                team_1_id VARCHAR(255) REFERENCES teams(team_id),
-                team_2_id VARCHAR(255) REFERENCES teams(team_id),
+                team_1_id INT REFERENCES teams(team_id),
+                team_2_id INT REFERENCES teams(team_id),
                 team_1_map_score INT DEFAULT 0,
                 team_2_map_score INT DEFAULT 0,
-                team_winner_id VARCHAR(255) REFERENCES teams(team_id)
+                team_winner_id INT REFERENCES teams(team_id)
             );
 
 
             CREATE TABLE vetos (
-                match_id VARCHAR(255) PRIMARY KEY REFERENCES matches(match_id) ON DELETE CASCADE,
+                match_id  INT PRIMARY KEY REFERENCES matches(match_id) ON DELETE CASCADE,
                 best_of INT CHECK (best_of IN (1, 3, 5)),
                 t1_removed_1 VARCHAR(100),
                 t2_removed_1 VARCHAR(100),
@@ -108,22 +108,24 @@ def setup_migrations() -> MigrationManager:
             );
 
             CREATE TABLE map_stats (
-                map_stat_id VARCHAR(255) PRIMARY KEY,
-                match_id VARCHAR(255) NOT NULL REFERENCES matches(match_id) ON DELETE CASCADE,
+                map_stat_id SERIAL PRIMARY KEY,
+                match_id  INT NOT NULL REFERENCES matches(match_id) ON DELETE CASCADE,
                 map_name VARCHAR(100) NOT NULL,
                 team_1_score INT NOT NULL,
                 team_2_score INT NOT NULL,
-                team_1_ct_score INT,
-                team_1_tr_score INT,
-                team_2_ct_score INT,
-                team_2_tr_score INT,
+                team_1_overtime_score INT,
+                team_2_overtime_score INT,
+                team_1_ct_score INT NOT NULL,
+                team_1_tr_score INT NOT NULL,
+                team_2_ct_score INT NOT NULL,
+                team_2_tr_score INT NOT NULL,
                 picked_by VARCHAR(20) CHECK (picked_by IN ('team_1', 'team_2', 'leftover')),
                 starting_ct VARCHAR(20) CHECK (starting_ct IN ('team_1', 'team_2'))
             );
 
             CREATE TABLE player_map_stats (
-                map_stat_id VARCHAR(255) NOT NULL REFERENCES map_stats(map_stat_id) ON DELETE CASCADE,
-                player_id VARCHAR(255) NOT NULL REFERENCES players(player_id),
+                map_stat_id  INT NOT NULL REFERENCES map_stats(map_stat_id) ON DELETE CASCADE,
+                player_id INT NOT NULL REFERENCES players(player_id),
                 PRIMARY key(map_stat_id, player_id), 
                 opening_kills_ct INT DEFAULT 0,
                 opening_deaths_ct INT DEFAULT 0,
