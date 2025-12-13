@@ -1,3 +1,11 @@
+## [1.1.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.1.0...v1.1.1) (2025-12-13)
+
+### Code Refactoring
+
+* add overtime handling ([b4c1d12](https://github.com/talDoFlemis/clutch-or-predict/commit/b4c1d12ca8504ac9ef8d9abaeb80bc74e9ba5147))
+* **frontier:** only call service if new entries ([caf83d3](https://github.com/talDoFlemis/clutch-or-predict/commit/caf83d3e71f0dd696a495b954a234977a0b0ca54))
+* **migrations:** add overtime rounds ([2713ea6](https://github.com/talDoFlemis/clutch-or-predict/commit/2713ea68f93c6465d28876e32dfcbb81d48140a9))
+
 ## [1.1.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.0.2...v1.1.0) (2025-12-12)
 
 ### Features
