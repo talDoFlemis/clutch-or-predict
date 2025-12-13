@@ -36,3 +36,8 @@ tasks:
     desc: Run the scraper in docker
     cmds:
       - docker compose up
+
+  scraper:worker-node:
+    desc: Start the scraper worker node using docker-compose
+    cmds:
+      - docker compose -f docker/scraper-node.docker-compose.yaml up --build -d
