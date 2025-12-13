@@ -1,3 +1,14 @@
+## [1.4.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.3.0...v1.4.0) (2025-12-13)
+
+### Features
+
+* **celery-worker:** use chainguard latest-dev package ([e68d2b6](https://github.com/talDoFlemis/clutch-or-predict/commit/e68d2b6d24c2c8c18f53c505cdd71ed5f24976d0))
+
+### Bug Fixes
+
+* **browser-entrypoint:** rm lock from display on shutdown ([7317891](https://github.com/talDoFlemis/clutch-or-predict/commit/73178916110abdc9a8d1e5fe3f4a6534d6c57a1b))
+* **celery-worker:** fix versino to python distroless 3.13 ([5b689d6](https://github.com/talDoFlemis/clutch-or-predict/commit/5b689d62d41faefc94fcd5edfd47318030febfba))
+
 ## [1.3.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.2.0...v1.3.0) (2025-12-13)
 
 ### Features
