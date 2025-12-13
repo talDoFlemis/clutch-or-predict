@@ -1,3 +1,11 @@
+## [1.3.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.2.0...v1.3.0) (2025-12-13)
+
+### Features
+
+* add dumb eda ([2ff1f76](https://github.com/talDoFlemis/clutch-or-predict/commit/2ff1f760bf03031f18d860346474cc1ee87409e8))
+* add parquet and csv files to git lfs ([13cf65d](https://github.com/talDoFlemis/clutch-or-predict/commit/13cf65de2d5e3c179cbe0ae9e7d7e1771909d6d5))
+* add polars, matplotlib, seaborn, connectorx and pyarrow as deps ([f71b775](https://github.com/talDoFlemis/clutch-or-predict/commit/f71b7754ca058fe002cda32255e266031503db3a))
+
 ## [1.2.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.1.2...v1.2.0) (2025-12-13)
 
 ### Features
