@@ -1,11 +1,11 @@
-FROM cgr.dev/chainguard/python:latest-dev AS builder
+FROM python:3.13-slim AS builder
 USER root
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
 ENV UV_PYTHON_DOWNLOADS=never
-ENV UV_PYTHON=/usr/bin/python
+ENV UV_PYTHON=/usr/local/bin/python
 
 
 RUN --mount=type=cache,target=/root/.cache/uv \
@@ -20,7 +20,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
   uv sync --locked --no-editable
 
 
-FROM cgr.dev/chainguard/python:latest-dev
+FROM al3xos/python-distroless:3.13-debian12
 
 WORKDIR /app
 
