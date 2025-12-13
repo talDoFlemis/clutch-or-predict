@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.1.2...v1.2.0) (2025-12-13)
+
+### Features
+
+* **release:** change container name of browser to browser ([21dd6e5](https://github.com/talDoFlemis/clutch-or-predict/commit/21dd6e590f72c0bf3c313c86d062a1cb2eb031d7))
+
 ## [1.1.2](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.1.1...v1.1.2) (2025-12-13)
 
 ### Code Refactoring
