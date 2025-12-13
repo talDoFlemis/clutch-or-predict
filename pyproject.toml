@@ -9,13 +9,17 @@ dependencies = [
   "dynaconf>=3.2.0",
   "flower>=2.0.1",
   "numpy>=2.3.5",
-  "pandas>=2.3.3",
   "parsel>=1.10.0",
   "patchright>=1.56.0",
   "pydantic>=2.12.5",
   "redis>=5.0.0",
   "psycopg[binary]>=3.3.2",
   "psycopg-pool>=3.3.0",
+  "polars>=1.36.1",
+  "matplotlib>=3.10.8",
+  "seaborn>=0.13.2",
+  "connectorx>=0.4.4",
+  "pyarrow>=22.0.0",
 ]
 
 [tool.uv]
