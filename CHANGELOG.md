@@ -1,3 +1,9 @@
+## [1.1.2](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.1.1...v1.1.2) (2025-12-13)
+
+### Code Refactoring
+
+* handle forfeit matchs ([d9647c9](https://github.com/talDoFlemis/clutch-or-predict/commit/d9647c9d2649fbca8164ca6eb4ba94d90bd2b163))
+
 ## [1.1.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.1.0...v1.1.1) (2025-12-13)
 
 ### Code Refactoring
