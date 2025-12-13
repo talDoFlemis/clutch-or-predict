@@ -1,17 +1,11 @@
-networks:
-  default:
-    enable_ipv6: true
-    driver: bridge
-    ipam:
-      config:
-        - subnet: fd00::/64
-
 services:
   browser:
     image: ghcr.io/taldoflemis/clutch-or-predict/browser
     environment:
       SCRAPER_BROWSER__DEBUG_PORT: 9223
       SCRAPER_BROWSER__DEBUG_ADDRESS: 0.0.0.0
+    ports:
+      - "9222:9222"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:9222/json/version"]
       interval: 30s
@@ -25,11 +19,13 @@ services:
     network_mode: host
     depends_on:
       browser:
-          condition: service_healthy
+        condition: service_healthy
     environment:
       TZ: America/Sao_Paulo
       DB_POSTGRES__HOST: host
       DB_POSTGRES__USER: postgres
+      DB_POSTGRES__DBNAME: cs2_stats
+      DB_POSTGRES__PASSWORD: molodoy
       DB_POSTGRES__SSLMODE: disable
       SCRAPER_REDIS__HOST: host
       SCRAPER_REDIS__PASSWORD: senha
@@ -41,3 +37,4 @@ services:
       SCRAPER_BROWSER__USE_CDP: true
       SCRAPER_BROWSER__DEBUG_PORT: 9222
       SCRAPER_BROWSER__DEBUG_ADDRESS: localhost
+
