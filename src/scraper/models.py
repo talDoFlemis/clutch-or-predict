@@ -3,6 +3,14 @@ from datetime import datetime
 from typing import Literal
 
 
+class VetoBoxNotFoundError(Exception):
+    """Raised when the veto box container is not found in the match page.
+    This indicates the match page structure is invalid or incomplete.
+    Celery tasks should not retry when this error is raised.
+    """
+    pass
+
+
 class MatchResult(BaseModel):
     match_id: str
     team_1_name: str

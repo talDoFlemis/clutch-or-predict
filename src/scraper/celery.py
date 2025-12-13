@@ -13,6 +13,7 @@ from scraper.match import get_match_result
 from scraper.vetos import get_vetos
 from scraper.map import get_maps_stats
 from scraper.player import get_players_maps_stats
+from scraper.models import VetoBoxNotFoundError
 from scraper.db_ops import (
     insert_match_result,
     insert_vetos,
@@ -377,6 +378,9 @@ def full_match(self, match_url: str):
         result = future.result()
         logger.info(f"Successfully scraped full match: {match_url}")
         return result
+    except VetoBoxNotFoundError as e:
+        logger.warning(f"Veto box not found for match {match_url}: {e} - Not retrying")
+        return None
     except Exception as e:
         logger.exception(f"Fatal error in full match scrape: {e}")
         self.retry(exc=e)

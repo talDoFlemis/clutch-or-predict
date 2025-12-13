@@ -1,5 +1,5 @@
 import re
-from scraper.models import Vetos
+from scraper.models import Vetos, VetoBoxNotFoundError
 from scraper.match import get_match_id, get_team_names_from_selector
 import logging
 from patchright.async_api import Page
@@ -35,7 +35,7 @@ async def get_vetos(page: Page, url: str) -> Vetos:
     # Locate the map veto container (second .padding element within .veto-box)
     veto_boxes = selector.css(".veto-box .padding")
     if len(veto_boxes) < 2:
-        raise ValueError("Could not find veto box container")
+        raise VetoBoxNotFoundError("Could not find veto box container")
 
     # Get all direct child divs of the second .padding element
     # Use xpath for direct child selector since CSS "> div" doesn't work with parsel
