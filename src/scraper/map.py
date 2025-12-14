@@ -154,17 +154,11 @@ def get_map_stat(
     return MapStat(**data_map)
 
 
-async def get_maps_stats(
-    page: Page,
+async def get_map_stats_from_selector(
+    selector: Selector,
     url: str,
 ) -> List[MapStat]:
-    await page.goto(url, wait_until="domcontentloaded")
-
     match_id = await get_match_id(url)
-
-    # Get HTML content and create parsel selector
-    html = await page.content()
-    selector = Selector(html)
 
     team_1_name, team_2_name = get_team_names_from_selector(selector)
 
@@ -179,3 +173,15 @@ async def get_maps_stats(
             stats.append(stat)
 
     return stats
+
+
+async def get_maps_stats(
+    page: Page,
+    url: str,
+) -> List[MapStat]:
+    await page.goto(url, wait_until="domcontentloaded")
+
+    html = await page.content()
+    selector = Selector(html)
+
+    return await get_map_stats_from_selector(selector, url)

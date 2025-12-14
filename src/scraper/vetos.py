@@ -9,14 +9,8 @@ from parsel import Selector
 logger = logging.getLogger(__name__)
 
 
-async def get_vetos(page: Page, url: str) -> Vetos:
-    await page.goto(url, wait_until="domcontentloaded")
+async def get_vetos_from_selector(selector: Selector, url: str) -> Vetos:
     match_id = await get_match_id(url)
-
-    # Get HTML content and create parsel selector
-    html = await page.content()
-    selector = Selector(html)
-
     t1_name, t2_name = get_team_names_from_selector(selector)
 
     # Extract best of information
@@ -97,3 +91,12 @@ async def get_vetos(page: Page, url: str) -> Vetos:
         vetos_data[key] = map_name
 
     return Vetos(**vetos_data)
+
+
+async def get_vetos(page: Page, url: str) -> Vetos:
+    await page.goto(url, wait_until="domcontentloaded")
+
+    html = await page.content()
+    selector = Selector(html)
+
+    return await get_vetos_from_selector(selector, url)

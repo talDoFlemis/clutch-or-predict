@@ -34,13 +34,9 @@ async def get_team_names(page: Page) -> tuple[str, str]:
     return get_team_names_from_selector(selector)
 
 
-async def get_match_result(page: Page, match_url: str) -> MatchResult:
-    await page.goto(match_url, wait_until="domcontentloaded")
-
-    # Get HTML content and create parsel selector
-    html = await page.content()
-    selector = Selector(html)
-
+async def get_match_result_from_selector(
+    selector: Selector, match_url: str
+) -> MatchResult:
     # Extract team 1 information
     team_1_href = selector.css(".teamsBox .team1-gradient a::attr(href)").get()
     match = re.search(r"/team/(\d+)", team_1_href or "")
@@ -86,7 +82,7 @@ async def get_match_result(page: Page, match_url: str) -> MatchResult:
     event_name = selector.css(".timeAndEvent a::attr(title)").get()
 
     # Extract match ID from current URL
-    match = re.search(r"/matches/(\d+)", page.url)
+    match = re.search(r"/matches/(\d+)", match_url)
     if match is None:
         raise ValueError("Failed to find match id")
     match_id = match.group(1)
@@ -107,3 +103,11 @@ async def get_match_result(page: Page, match_url: str) -> MatchResult:
         event_id=event_id,
         date=datetime.fromtimestamp(float(date) / 1000),
     )
+
+
+async def get_match_result(page: Page, match_url: str) -> MatchResult:
+    await page.goto(match_url, wait_until="domcontentloaded")
+
+    html = await page.content()
+    selector = Selector(html)
+    return await get_match_result_from_selector(selector, match_url)

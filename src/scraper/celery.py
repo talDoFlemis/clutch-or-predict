@@ -9,9 +9,9 @@ from psycopg import AsyncConnection
 
 from db import pool
 from scraper.pool import PagePool, create_page_pool
-from scraper.match import get_match_result
-from scraper.vetos import get_vetos
-from scraper.map import get_maps_stats
+from scraper.match import get_match_result, get_match_result_from_selector
+from scraper.vetos import get_vetos, get_vetos_from_selector
+from scraper.map import get_maps_stats, get_map_stats_from_selector
 from scraper.player import get_players_maps_stats
 from scraper.models import VetoBoxNotFoundError
 from scraper.db_ops import (
@@ -274,10 +274,19 @@ async def process_full_match(
     page_pool: PagePool, conn: AsyncConnection, match_url: str
 ):
     try:
-        # Insert all data without committing
-        await process_match_result(page_pool, conn, match_url)
-        await process_maps(page_pool, conn, match_url)
-        await process_vetos(page_pool, conn, match_url)
+        async with page_pool.get_page() as page:
+            await page.goto(match_url, wait_until="domcontentloaded")
+            selector = Selector(await page.content())
+
+            match_result = await get_match_result_from_selector(selector, match_url)
+            await insert_match_result(conn, match_result)
+
+            map_stats = await get_map_stats_from_selector(selector, match_url)
+            await insert_map_stats(conn, map_stats)
+
+            vetos = await get_vetos_from_selector(selector, match_url)
+            await insert_vetos(conn, vetos)
+
         await process_player_stats(page_pool, conn, match_url)
 
         # If all succeed, commit the transaction
