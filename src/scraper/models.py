@@ -8,6 +8,7 @@ class VetoBoxNotFoundError(Exception):
     This indicates the match page structure is invalid or incomplete.
     Celery tasks should not retry when this error is raised.
     """
+
     pass
 
 
@@ -104,3 +105,24 @@ class PlayerMapStat(BaseModel):
     adr_tr: float
     swing_tr: float
     rating_3_dot_0_tr: float
+
+
+class Event(BaseModel):
+    event_id: str
+    name: str
+
+    start_date: datetime
+    end_date: datetime
+
+    invite_date: datetime | None = None
+
+    vrs_date: datetime | None = None
+    vrs_weight: int | None = None
+
+    teams: int
+    total_prize_pool: int
+    player_share: int | None = None
+
+    location: str
+    event_type: str
+    has_top_50_teams: bool

@@ -160,6 +160,28 @@ def setup_migrations() -> MigrationManager:
         )
     )
 
+    manager.register_migration(
+        Migration(
+            version=2,
+            name="add_unique_constraints",
+            up_sql="""
+            ALTER TABLE events
+                ADD COLUMN IF NOT EXISTS start_date TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS end_date TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS invite_date TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS invite_date TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS vrs_date TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS vrs_weight INT DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS teams INT DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS total_prize_pool DECIMAL DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS player_share DECIMAL DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS location VARCHAR(100) DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS event_type VARCHAR(100) DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS has_top_50_teams BOOLEAN DEFAULT false;
+            """,
+        )
+    )
+
     return manager
 
 

@@ -20,6 +20,7 @@ dependencies = [
   "seaborn>=0.13.2",
   "connectorx>=0.4.4",
   "pyarrow>=22.0.0",
+  "scikit-learn>=1.8.0",
 ]
 
 [tool.uv]
@@ -34,3 +35,4 @@ frontier = "scraper.frontier:main"
 migrate = "db.migrations:main"
 browser = "scraper.browser:main"
 worker = "scraper.worker:main"
+top_events_frontier = "scraper.top_events_frontier:main"

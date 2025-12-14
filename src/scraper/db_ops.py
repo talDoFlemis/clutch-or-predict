@@ -5,7 +5,57 @@ Database operations for scraper tasks.
 from typing import List
 from psycopg import AsyncConnection
 
-from scraper.models import MatchResult, Vetos, MapStat, PlayerMapStat
+from scraper.models import Event, MatchResult, Vetos, MapStat, PlayerMapStat
+
+
+async def insert_event(conn: AsyncConnection, event: Event) -> None:
+    await conn.execute(
+        """
+INSERT INTO EVENTS (event_id,
+                    name,
+                    start_date,
+                    end_date,
+                    location,
+                    invite_date,
+                    vrs_date,
+                    vrs_weight,
+                    teams,
+                    total_prize_pool,
+                    player_share,
+                    event_type,
+                    has_top_50_teams)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (event_id) DO
+UPDATE
+SET name = EXCLUDED.name,
+    start_date = EXCLUDED.start_date,
+    end_date = EXCLUDED.end_date,
+    location = EXCLUDED.location,
+               invite_date = EXCLUDED.invite_date,
+               vrs_date = EXCLUDED.vrs_date,
+               vrs_weight = EXCLUDED.vrs_weight,
+               teams = EXCLUDED.teams,
+               total_prize_pool = EXCLUDED.total_prize_pool,
+               player_share = EXCLUDED.player_share,
+               event_type = EXCLUDED.event_type,
+               has_top_50_teams = EXCLUDED.has_top_50_teams
+        """,
+        (
+            event.event_id,
+            event.name,
+            event.start_date,
+            event.end_date,
+            event.location,
+            event.invite_date,
+            event.vrs_date,
+            event.vrs_weight,
+            event.teams,
+            event.total_prize_pool,
+            event.player_share,
+            event.event_type,
+            event.has_top_50_teams,
+        ),
+    )
+    pass
 
 
 async def insert_match_result(conn: AsyncConnection, result: MatchResult) -> None:

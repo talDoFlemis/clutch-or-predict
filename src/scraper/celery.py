@@ -4,17 +4,20 @@ import logging
 import socket
 import threading
 from celery import Celery, signals
+from parsel import Selector
 from patchright.async_api import BrowserContext, async_playwright, Playwright
 from psycopg import AsyncConnection
 
 from db import pool
+from scraper.event import get_event
 from scraper.pool import PagePool, create_page_pool
 from scraper.match import get_match_result, get_match_result_from_selector
 from scraper.vetos import get_vetos, get_vetos_from_selector
 from scraper.map import get_maps_stats, get_map_stats_from_selector
 from scraper.player import get_players_maps_stats
-from scraper.models import VetoBoxNotFoundError
+from scraper.models import VetoBoxNotFoundError, Event
 from scraper.db_ops import (
+    insert_event,
     insert_match_result,
     insert_vetos,
     insert_map_stats,
@@ -300,6 +303,16 @@ async def process_full_match(
         raise
 
 
+async def process_event(
+    page_pool: PagePool, conn: AsyncConnection, event_url: str, top_event: bool = False
+) -> Event:
+    async with page_pool.get_page() as page:
+        event = await get_event(page, event_url)
+        event.has_top_50_teams = top_event
+        await insert_event(conn, event)
+        return event
+
+
 def _run_async_task(self, coro_func, match_url: str, serialize_list=False):
     global page_pool, event_loop, db_pool
 
@@ -392,4 +405,36 @@ def full_match(self, match_url: str):
         return None
     except Exception as e:
         logger.exception(f"Fatal error in full match scrape: {e}")
+        self.retry(exc=e)
+
+
+@app.task(bind=True, name="scraper.tasks.event", max_retries=3)
+def event(self, event_url: str, top_event: bool = False):
+    """Scrape Event from a CS:GO/CS2 event from HLTV."""
+    global page_pool, event_loop, db_pool
+
+    try:
+        ensure_initialized()
+
+        if page_pool is None or event_loop is None or db_pool is None:
+            logger.error(
+                f"Page pool {page_pool}, event loop {event_loop}, db pool {db_pool} not ready"
+            )
+            raise RuntimeError("Resources failed to initialize properly.")
+
+        async def scrape(
+            db_pool: pool.DatabasePool, page_pool: PagePool, event_url: str
+        ):
+            async with db_pool.get_connection() as conn:
+                return await process_event(page_pool, conn, event_url, top_event)
+
+        future = asyncio.run_coroutine_threadsafe(
+            scrape(db_pool, page_pool, event_url), event_loop
+        )
+
+        result = future.result()
+        logger.info(f"Successfully scraped event: {event_url}")
+        return result.model_dump_json()
+    except Exception as e:
+        logger.exception(f"Fatal error in full event scrape: {e}")
         self.retry(exc=e)
