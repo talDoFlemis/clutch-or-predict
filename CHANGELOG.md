@@ -1,3 +1,9 @@
+## [1.5.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.4.1...v1.5.0) (2025-12-14)
+
+### Features
+
+* **config:** add ipv6_bracket option ([2763446](https://github.com/talDoFlemis/clutch-or-predict/commit/276344622f5644ceceac8465a76962efa87391e3))
+
 ## [1.4.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.4.0...v1.4.1) (2025-12-13)
 
 ### Bug Fixes
