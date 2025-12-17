@@ -1,3 +1,10 @@
+## [1.6.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.5.0...v1.6.0) (2025-12-17)
+
+### Features
+
+* add event ([032eaa5](https://github.com/talDoFlemis/clutch-or-predict/commit/032eaa5e3a0fdadd78ab37ae775e557896d87670))
+* make map,vetos and match use same selector ([d9a46de](https://github.com/talDoFlemis/clutch-or-predict/commit/d9a46de4552c6ab8159ce893b63a96cca8df0531))
+
 ## [1.5.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.4.1...v1.5.0) (2025-12-14)
 
 ### Features
