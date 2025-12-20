@@ -182,6 +182,17 @@ def setup_migrations() -> MigrationManager:
         )
     )
 
+    manager.register_migration(
+        Migration(
+            version=3,
+            name="add_team_id_to_player_map_stats",
+            up_sql="""
+            ALTER TABLE player_map_stats
+                ADD COLUMN IF NOT EXISTS team_id INT REFERENCES teams(team_id);
+            """,
+        )
+    )
+
     return manager
 
 
