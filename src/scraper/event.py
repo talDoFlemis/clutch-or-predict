@@ -91,14 +91,11 @@ async def get_event(page: Page, event_url: str) -> Event:
     player_share = None
     if player_share_str:
         try:
-            player_share = int(
-                player_share_str.replace("$", "").replace(",", "")
-            )
+            player_share = int(player_share_str.replace("$", "").replace(",", ""))
         except ValueError:
             logger.warning(
                 f"Could not parse player share '{player_share_str}' for event ID: {event_id}"
             )
-    
 
     location = get_table_value(selector, "Location") or ""
     event_type = get_table_value(selector, "Event type") or ""

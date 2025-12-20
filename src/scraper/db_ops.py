@@ -184,9 +184,9 @@ async def insert_player_stats(
                  traded_deaths_ct, adr_ct, swing_ct, rating_3_dot_0_ct, 
                  opening_kills_tr, opening_deaths_tr, multikills_tr, kast_tr, clutches_tr, 
                  kills_tr, headshot_kills_tr, assists_tr, flash_assists_tr, deaths_tr, 
-                 traded_deaths_tr, adr_tr, swing_tr, rating_3_dot_0_tr) 
+                 traded_deaths_tr, adr_tr, swing_tr, rating_3_dot_0_tr, team_id) 
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (map_stat_id, player_id) DO NOTHING
             """,
             (
@@ -220,5 +220,6 @@ async def insert_player_stats(
                 player_stat.adr_tr,
                 player_stat.swing_tr,
                 player_stat.rating_3_dot_0_tr,
+                player_stat.team_id,
             ),
         )

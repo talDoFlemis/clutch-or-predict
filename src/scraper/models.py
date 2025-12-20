@@ -73,6 +73,7 @@ class PlayerMapStat(BaseModel):
 
     player_id: str
     player_name: str
+    team_id: str
 
     # CT Side
     opening_kills_ct: int

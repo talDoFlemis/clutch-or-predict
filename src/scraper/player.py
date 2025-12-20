@@ -1,7 +1,8 @@
 import asyncio
 from typing import Dict, List, Any
 from patchright.async_api import Page
-from scraper.models import PlayerMapStat
+from scraper.match import get_match_result_from_selector
+from scraper.models import MatchResult, PlayerMapStat
 from scraper.map import get_mapstatsid_from_url
 import logging
 import re
@@ -13,8 +14,17 @@ from scraper.pool import PagePool
 logger = logging.getLogger(__name__)
 
 
+def get_player_id_from_href(player_href: str) -> str:
+    match = re.search(r"/players/(\d+)", player_href)
+    if match is None:
+        raise ValueError("Player ID not found in href")
+    return match.group(1)
+
+
 def process_row(
-    row_selector: Selector, map_stat_id: str, is_tr: bool
+    row_selector: Selector,
+    map_stat_id: str,
+    is_tr: bool,
 ) -> Dict[str, Any]:
     data_map: Dict[str, Any] = {"map_stat_id": map_stat_id}
 
@@ -27,11 +37,8 @@ def process_row(
     if not player_name or not player_href:
         raise ValueError("Player name or href not found")
 
-    match = re.search(r"/players/(\d+)", player_href)
-    if match is None:
-        raise ValueError("Player ID not found in href")
-
-    data_map["player_id"] = match.group(1)
+    player_id = get_player_id_from_href(player_href)
+    data_map["player_id"] = player_id
     data_map["player_name"] = player_name
 
     # Opening kills/deaths
@@ -135,6 +142,7 @@ def process_row(
 async def process_map(
     page: Page,
     map_stat_link: str,
+    match_result: MatchResult,
 ) -> List[PlayerMapStat]:
     await page.goto(map_stat_link, wait_until="domcontentloaded")
     map_stat_id = get_mapstatsid_from_url(map_stat_link)
@@ -163,6 +171,25 @@ async def process_map(
             raise ValueError(f"CT stat for unknown player ID {player_id}")
 
         player_map_stats[player_id].update(ct_stat)
+
+    # Get team id for each player
+    for total_stats_selector in selector.css(".stats-table.totalstats"):
+        team_name = total_stats_selector.css(
+            "thead > tr > th > img.logo::attr(title)"
+        ).get()
+        team_id = (
+            match_result.team_1_id
+            if team_name and team_name == match_result.team_1_name
+            else match_result.team_2_id
+        )
+        players = total_stats_selector.css(
+            "tbody > tr .st-player a::attr(href)"
+        ).getall()
+        for player_href in players:
+            player_id = get_player_id_from_href(player_href)
+
+            if player_id in player_map_stats:
+                player_map_stats[player_id]["team_id"] = team_id
 
     stats = []
     for stat in player_map_stats.values():
@@ -201,12 +228,14 @@ async def get_players_maps_stats(
             if href:
                 maps_to_process.append(f"https://www.hltv.org{href}")
 
+        match_result = await get_match_result_from_selector(selector, match_url)
+
         logger.debug(f"Found {len(maps_to_process)} map links")
         logger.debug(f"Map links: {maps_to_process}")
 
     async def process_map_with_page(map_link: str) -> List[PlayerMapStat]:
         async with pool.get_page() as page:
-            return await process_map(page, map_link)
+            return await process_map(page, map_link, match_result)
 
     results = await asyncio.gather(
         *[process_map_with_page(map_link) for map_link in maps_to_process]
