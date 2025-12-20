@@ -1,3 +1,10 @@
+## [1.7.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.6.0...v1.7.0) (2025-12-20)
+
+### Features
+
+* add team_id to player map stat ([5dc167a](https://github.com/talDoFlemis/clutch-or-predict/commit/5dc167af83c040522cfe5626f8118c2add5d4944))
+* add team_id to player_map_stat table ([b036ab1](https://github.com/talDoFlemis/clutch-or-predict/commit/b036ab1f8d9aa9f9244fd8d5f6e0cd05c3b20840))
+
 ## [1.6.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.5.0...v1.6.0) (2025-12-17)
 
 ### Features
