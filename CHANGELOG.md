@@ -1,3 +1,9 @@
+## [1.8.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.7.0...v1.8.0) (2025-12-22)
+
+### Features
+
+* **top_events_frontier:** add clear visited ([60b5b77](https://github.com/talDoFlemis/clutch-or-predict/commit/60b5b77d3e9916434ac8e3330299bde2dc4fe958))
+
 ## [1.7.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.6.0...v1.7.0) (2025-12-20)
 
 ### Features
