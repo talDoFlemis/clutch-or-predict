@@ -72,7 +72,7 @@ async def __parse_page(page: Page, redis_client: redis.Redis, url: str):
         await __parse_links_on_page(page, redis_client)
 
 
-async def scrape(url: str):
+async def scrape(url: str, clear_visited: bool = False):
     async with async_playwright() as p:
         try:
             browser = await p.chromium.launch_persistent_context(
@@ -87,6 +87,9 @@ async def scrape(url: str):
             pool = await create_page_pool(
                 browser, max_amount_of_concurrent_pages=1, initial_page_size=1
             )
+
+            if clear_visited:
+                redis_client.delete(visited_key)
 
             async with pool.get_page() as page:
                 await __parse_page(page, redis_client, url)
@@ -111,6 +114,11 @@ def main():
         type=str,
         help="End date in YYYY-MM-DD format (defaults to today)",
     )
+    parser.add_argument(
+        "--clear-visited",
+        action="store_true",
+        help="Clear visited URLs cache before crawling",
+    )
 
     args = parser.parse_args()
 
@@ -125,7 +133,7 @@ def main():
 
     url = f"https://www.hltv.org/stats/events?csVersion=CS2&startDate={start_date.strftime('%Y-%m-%d')}&endDate={end_date.strftime('%Y-%m-%d')}&rankingFilter=Top50"
 
-    asyncio.run(scrape(url))
+    asyncio.run(scrape(url, args.clear_visited))
 
 
 if __name__ == "__main__":
