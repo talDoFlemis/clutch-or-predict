@@ -3,6 +3,7 @@ from typing import Any, Callable, Coroutine, Optional
 from urllib.parse import urlencode
 import logging
 import asyncio
+from parsel import Selector
 from patchright.async_api import async_playwright, Page
 from scraper.celery import full_match
 
@@ -99,12 +100,14 @@ class HLTVFrontier:
 
 
 async def __parse_links_on_page(page: Page, frontier: HLTVFrontier):
-    links_locator = await page.locator(".result-con .a-reset").all()
+    doc = await page.content()
+    selector = Selector(doc)
+
+    links = selector.css(".result-con .a-reset::attr(href)").getall()
 
     amount_of_links = 0
 
-    for link_locator in links_locator:
-        href = await link_locator.get_attribute("href")
+    for href in links:
         if href is not None:
             full_url = f"https://www.hltv.org{href}"
             if not frontier.is_visited(full_url):
