@@ -143,16 +143,14 @@ async def run_frontier(
 ) -> None:
     async with async_playwright() as p:
         try:
-            browser = await p.chromium.launch_persistent_context(
-                user_data_dir="/tmp/playwright",
+            browser = await p.chromium.launch(
                 channel="chrome",
                 headless=False,
-                no_viewport=True,
             )
 
             start = asyncio.get_event_loop().time()
             pool = await create_page_pool(
-                browser, max_amount_of_concurrent_pages=1, initial_page_size=1
+                browser, max_amount_of_concurrent_pages=1, initial_page_size=1,
             )
 
             with HLTVFrontier() as frontier:

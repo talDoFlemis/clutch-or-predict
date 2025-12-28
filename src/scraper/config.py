@@ -61,6 +61,10 @@ def get_page_pool_max_amount() -> int:
     """Get the maximum amount of concurrent pages for the page pool."""
     return settings.get("page_pool.max_amount", 30)
 
+def get_maximum_operations_per_context() -> int:
+    """Get the maximum number of operations per browser context."""
+    return settings.get("page_pool.maximum_operations_per_context", 200)
+
 
 def get_page_pool_initial_size() -> int:
     """Get the initial page size for the page pool."""

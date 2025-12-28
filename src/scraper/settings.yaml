@@ -21,6 +21,7 @@ default:
     initial_size: 30
     minimum_amount: 30
     default_timeout: 30000 # milliseconds
+    maximum_operations_per_context: 200
 
   # Browser Configuration
   # Set use_cdp to true to connect to a remote browser via Chrome DevTools Protocol

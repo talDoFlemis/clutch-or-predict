@@ -11,6 +11,7 @@ def main():
     argv = [
         "worker",
         "--pool=threads",
+        "--loglevel=DEBUG",
     ]
 
     app.worker_main(argv=argv)
