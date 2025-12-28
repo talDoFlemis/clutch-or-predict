@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.8.0...v1.8.1) (2025-12-28)
+
+### Code Refactoring
+
+* **frontier:** use parsel selector ([569ef8a](https://github.com/talDoFlemis/clutch-or-predict/commit/569ef8af8e215ad14ff649ac05c86e4001f77fc6))
+* **pool:** recycle context ([b55b7a0](https://github.com/talDoFlemis/clutch-or-predict/commit/b55b7a0763f1b98e2e22b8571b10d5651b7fa904))
+
 ## [1.8.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.7.0...v1.8.0) (2025-12-22)
 
 ### Features
