@@ -1,3 +1,9 @@
+## [1.8.7](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.8.6...v1.8.7) (2025-12-29)
+
+### Documentation
+
+* starting article ([2adc93a](https://github.com/talDoFlemis/clutch-or-predict/commit/2adc93a3f1f00c3651b290182372e3dce6dcea56))
+
 ## [1.8.6](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.8.5...v1.8.6) (2025-12-29)
 
 ### Code Refactoring
