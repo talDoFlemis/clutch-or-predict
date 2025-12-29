@@ -1,0 +1,31 @@
+[project]
+name = "scraper"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [{ name = "Said Rodrigues", email = "coderflemis@gmail.com" }]
+requires-python = ">=3.12"
+dependencies = [
+  "celery[redis]>=5.6.0",
+  "flower>=2.0.1",
+  "parsel>=1.10.0",
+  "patchright>=1.56.0",
+  "psycopg-pool>=3.3.0",
+  "psycopg[binary]>=3.3.2",
+  "pydantic>=2.12.5",
+  "redis>=6.4.0",
+  "conf",
+]
+
+[tool.uv.sources]
+conf = { workspace = true }
+
+[project.scripts]
+scraper = "scraper:scrape"
+frontier = "scraper.frontier:main"
+worker = "scraper.worker:main"
+top_events_frontier = "scraper.top_events_frontier:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

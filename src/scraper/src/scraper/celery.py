@@ -23,7 +23,7 @@ from scraper.db_ops import (
     insert_map_stats,
     insert_player_stats,
 )
-from scraper.config import (
+from conf import (
     get_broker_url,
     get_celery_worker_concurrency,
     get_celery_worker_log_level,

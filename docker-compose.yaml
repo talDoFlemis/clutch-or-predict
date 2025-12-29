@@ -17,8 +17,8 @@ services:
       - 9222:9222
     environment:
       # Socat to forward the debug port on port 9222
-      SCRAPER_BROWSER__DEBUG_PORT: 9223
-      SCRAPER_BROWSER__DEBUG_ADDRESS: 0.0.0.0
+      CLUTCHORPREDICT_BROWSER__DEBUG_PORT: 9223
+      CLUTCHORPREDICT_BROWSER__DEBUG_ADDRESS: 0.0.0.0
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:9222/json/version"]
       interval: 30s
@@ -36,13 +36,13 @@ services:
       - redis
       - db
     environment:
-      SCRAPER_REDIS__HOST: "[2804:1a04:807d:8b00:be24:11ff:fe8b:e582]"
-      SCRAPER_REDIS__PASSWORD: senha
-      SCRAPER_CELERY__WORKER_CONCURRENCY: 10
-      SCRAPER_CELERY__WORKER_LOG_LEVEL: "DEBUG"
-      SCRAPER_BROWSER__USE_CDP: true
-      SCRAPER_BROWSER__DEBUG_PORT: 9222
-      SCRAPER_BROWSER__DEBUG_ADDRESS: browser
+      CLUTCHORPREDICT_REDIS__HOST: "localhost"
+      CLUTCHORPREDICT_REDIS__PASSWORD: senha
+      CLUTCHORPREDICT_CELERY__WORKER_CONCURRENCY: 10
+      CLUTCHORPREDICT_CELERY__WORKER_LOG_LEVEL: "DEBUG"
+      CLUTCHORPREDICT_BROWSER__USE_CDP: true
+      CLUTCHORPREDICT_BROWSER__DEBUG_PORT: 9222
+      CLUTCHORPREDICT_BROWSER__DEBUG_ADDRESS: browser
 
   redis-insight:
     image: redis/redisinsight:latest

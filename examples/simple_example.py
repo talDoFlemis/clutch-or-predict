@@ -51,11 +51,10 @@ async def main():
     async with async_playwright() as p:
         try:
             b = await p.chromium.connect_over_cdp("http://localhost:9222")
-            browser = b.contexts[0]
             url = bo1_match
 
             start = asyncio.get_event_loop().time()
-            pool = await create_page_pool(browser)
+            pool = await create_page_pool(b)
 
             tasks = [
                 process_match(pool, url),
@@ -73,7 +72,6 @@ async def main():
                 f"Scraping completed in {end - start:.2f} seconds",
             )
 
-            await browser.close()
             await b.close()
 
         except Exception as e:

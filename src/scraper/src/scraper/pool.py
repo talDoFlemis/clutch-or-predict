@@ -3,6 +3,8 @@ from patchright.async_api import BrowserContext, Page
 from contextlib import asynccontextmanager
 import logging
 
+from conf import get_browser_no_viewport
+
 
 logger = logging.getLogger(__name__)
 

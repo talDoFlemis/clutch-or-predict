@@ -2,10 +2,8 @@ services:
   browser:
     image: ghcr.io/taldoflemis/clutch-or-predict/browser
     environment:
-      SCRAPER_BROWSER__DEBUG_PORT: 9223
-      SCRAPER_BROWSER__DEBUG_ADDRESS: 0.0.0.0
-    ports:
-      - "9222:9222"
+      CLUTCHORPREDICT_BROWSER__DEBUG_PORT: 9223
+      CLUTCHORPREDICT_BROWSER__DEBUG_ADDRESS: 0.0.0.0
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:9222/json/version"]
       interval: 30s
@@ -16,25 +14,24 @@ services:
 
   worker:
     image: ghcr.io/taldoflemis/clutch-or-predict/celery-worker
-    network_mode: host
     depends_on:
       browser:
         condition: service_healthy
     environment:
       TZ: America/Sao_Paulo
-      DB_POSTGRES__HOST: host
-      DB_POSTGRES__USER: postgres
-      DB_POSTGRES__DBNAME: cs2_stats
-      DB_POSTGRES__PASSWORD: molodoy
-      DB_POSTGRES__SSLMODE: disable
-      SCRAPER_REDIS__HOST: host
-      SCRAPER_REDIS__PASSWORD: senha
-      SCRAPER_CELERY__WORKER_CONCURRENCY: 1
-      SCRAPER_CELERY__WORKER_LOG_LEVEL: "DEBUG"
-      SCRAPER_PAGE_POOL__MAX_AMOUNT: "10"
-      SCRAPER_PAGE_POOL__INITIAL_SIZE: "10"
-      SCRAPER_PAGE_POOL__MINIMUM_AMOUNT: "10"
-      SCRAPER_BROWSER__USE_CDP: true
-      SCRAPER_BROWSER__DEBUG_PORT: 9222
-      SCRAPER_BROWSER__DEBUG_ADDRESS: localhost
+      CLUTCHORPREDICT_POSTGRES__HOST: localhost
+      CLUTCHORPREDICT_POSTGRES__USER: postgres
+      CLUTCHORPREDICT_POSTGRES__DBNAME: cs2_stats
+      CLUTCHORPREDICT_POSTGRES__PASSWORD: molodoy
+      CLUTCHORPREDICT_POSTGRES__SSLMODE: disable
+      CLUTCHORPREDICT_REDIS__HOST: "localhost"
+      CLUTCHORPREDICT_REDIS__PASSWORD: senha
+      CLUTCHORPREDICT_CELERY__WORKER_CONCURRENCY: 1
+      CLUTCHORPREDICT_CELERY__WORKER_LOG_LEVEL: "DEBUG"
+      CLUTCHORPREDICT_PAGE_POOL__MAX_AMOUNT: "10"
+      CLUTCHORPREDICT_PAGE_POOL__INITIAL_SIZE: "10"
+      CLUTCHORPREDICT_PAGE_POOL__MINIMUM_AMOUNT: "10"
+      CLUTCHORPREDICT_BROWSER__USE_CDP: true
+      CLUTCHORPREDICT_BROWSER__DEBUG_PORT: 9222
+      CLUTCHORPREDICT_BROWSER__DEBUG_ADDRESS: localhost
 

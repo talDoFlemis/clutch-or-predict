@@ -11,11 +11,9 @@ async def scrape():
     url = "https://www.hltv.org/events/8870/wraith-tesfed-league-season-2"
     async with async_playwright() as p:
         try:
-            browser = await p.chromium.launch_persistent_context(
-                user_data_dir="/tmp/playwright",
+            browser = await p.chromium.launch(
                 channel="chrome",
                 headless=False,
-                no_viewport=True,
             )
             pool = await create_page_pool(
                 browser, max_amount_of_concurrent_pages=1, initial_page_size=1

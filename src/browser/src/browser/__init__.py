@@ -4,7 +4,7 @@ import os
 import sys
 from patchright.async_api import BrowserContext, async_playwright
 
-from scraper.config import get_debug_port, get_debug_address
+from conf import get_debug_port, get_debug_address
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(

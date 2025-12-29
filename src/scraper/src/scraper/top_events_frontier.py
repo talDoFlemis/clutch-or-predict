@@ -4,7 +4,7 @@ from typing import List
 
 import redis
 import re
-from scraper.config import get_broker_url
+from conf import get_broker_url
 from scraper.celery import event as process_event
 from patchright.async_api import async_playwright, Page
 from parsel import Selector
@@ -75,11 +75,9 @@ async def __parse_page(page: Page, redis_client: redis.Redis, url: str):
 async def scrape(url: str):
     async with async_playwright() as p:
         try:
-            browser = await p.chromium.launch_persistent_context(
-                user_data_dir="/tmp/playwright",
+            browser = await p.chromium.launch(
                 channel="chrome",
                 headless=False,
-                no_viewport=True,
             )
             redis_client = redis.Redis.from_url(
                 url=get_broker_url(),

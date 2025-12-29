@@ -12,14 +12,14 @@ default:
 
   # Celery Worker Configuration
   celery:
-    worker_concurrency: 5 # Number of concurrent worker processes/threads
+    worker_concurrency: 1 # Number of concurrent worker processes/threads
     worker_log_level: "DEBUG" # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
 
   # Page Pool Configuration
   page_pool:
-    max_amount: 30
-    initial_size: 30
-    minimum_amount: 30
+    max_amount: 10
+    initial_size: 10
+    minimum_amount: 10
     default_timeout: 30000 # milliseconds
 
   # Browser Configuration
@@ -35,6 +35,16 @@ default:
     # Browser server debug settings (used for CDP connection)
     debug_port: 9222
     debug_address: "127.0.0.1"
+
+  # PostgreSQL Database Configuration
+  postgres:
+    host: "localhost"
+    port: 5432
+    user: "postgres"
+    password: "molodoy"
+    dbname: "cs2_stats"
+    sslmode: "disable" # Options: disable, allow, prefer, require, verify-ca, verify-full
+
 # Override settings using environment variables with SCRAPER_ prefix:
 # export SCRAPER_REDIS__PASSWORD="your_password"
 # export SCRAPER_REDIS__HOST="redis.example.com"
@@ -44,4 +54,10 @@ default:
 # export SCRAPER_PAGE_POOL__INITIAL_SIZE=10
 # export SCRAPER_BROWSER__DEBUG_PORT=9223
 # export SCRAPER_BROWSER__DEBUG_ADDRESS="0.0.0.0"
-
+# Override settings using environment variables with DB_ prefix:
+# export DB_POSTGRES__HOST="db.example.com"
+# export DB_POSTGRES__PORT=5433
+# export DB_POSTGRES__USER="dbuser"
+# export DB_POSTGRES__PASSWORD="your_password"
+# export DB_POSTGRES__DBNAME="production_db"
+# export DB_POSTGRES__SSLMODE="require"

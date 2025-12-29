@@ -9,7 +9,7 @@ from scraper.celery import full_match
 import redis
 
 from scraper.pool import create_page_pool
-from scraper.config import settings
+from conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ class HLTVFrontier:
 
     def __init__(self):
         # Get Redis configuration from dynaconf settings
-        host = "2804:1a04:807d:8b00:be24:11ff:fe85:e66b"
+        host = "2804:1a04:807d:8b00:be24:11ff:fec4:ed39"
         port = settings.get("redis.port", 6379)
         password = settings.get("redis.password", "")
         db = settings.get("redis.db", 0)

@@ -1,7 +1,3 @@
-"""
-Configuration module for scraper using Dynaconf.
-"""
-
 from pathlib import Path
 from dynaconf import Dynaconf
 
@@ -9,7 +5,7 @@ from dynaconf import Dynaconf
 settings_dir = Path(__file__).parent
 
 settings = Dynaconf(
-    envvar_prefix="SCRAPER",
+    envvar_prefix="CLUTCHORPREDICT",
     settings_files=[
         settings_dir / "settings.yaml",
         settings_dir / ".secrets.yaml",
@@ -62,6 +58,11 @@ def get_page_pool_max_amount() -> int:
     return settings.get("page_pool.max_amount", 30)
 
 
+def get_maximum_operations_per_context() -> int:
+    """Get the maximum number of operations per browser context."""
+    return settings.get("page_pool.maximum_operations_per_context", 200)
+
+
 def get_page_pool_initial_size() -> int:
     """Get the initial page size for the page pool."""
     return settings.get("page_pool.initial_size", 30)
@@ -110,3 +111,47 @@ def get_debug_port() -> int:
 def get_debug_address() -> str:
     """Get the Chrome remote debugging address."""
     return settings.get("browser.debug_address", "127.0.0.1")
+
+
+def get_database_url(make_ipv6_in_bracket: bool = False) -> str:
+    """
+    Build the PostgreSQL database URL from configuration.
+
+    Returns:
+        str: The complete PostgreSQL database URL in the format:
+             postgresql://user:password@host:port/dbname?sslmode=mode
+    """
+    user = settings.get("postgres.user", "postgres")
+    password = settings.get("postgres.password", "")
+    host = settings.get("postgres.host", "localhost")
+    port = settings.get("postgres.port", 5432)
+    dbname = settings.get("postgres.dbname", "postgres")
+    sslmode = settings.get("postgres.sslmode", "prefer")
+
+    # Build auth part
+    auth = f"{user}"
+    if password:
+        auth = f"{user}:{password}"
+
+    if make_ipv6_in_bracket and ":" in host:
+        # If the host contains a colon, wrap it in brackets for IPv6 compatibility
+        host = f"[{host}]"
+
+    return f"postgresql://{auth}@{host}:{port}/{dbname}?sslmode={sslmode}"
+
+
+def get_connection_params() -> dict:
+    """
+    Get PostgreSQL connection parameters as a dictionary.
+
+    Returns:
+        dict: Connection parameters for psycopg2/psycopg3
+    """
+    return {
+        "host": settings.get("postgres.host", "localhost"),
+        "port": settings.get("postgres.port", 5432),
+        "user": settings.get("postgres.user", "postgres"),
+        "password": settings.get("postgres.password", ""),
+        "dbname": settings.get("postgres.dbname", "postgres"),
+        "sslmode": settings.get("postgres.sslmode", "prefer"),
+    }

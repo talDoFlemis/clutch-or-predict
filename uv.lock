@@ -1,6 +1,15 @@
 version = 1
 requires-python = ">=3.12"
 
+[manifest]
+members = [
+    "browser",
+    "clutch-or-predict",
+    "conf",
+    "db",
+    "scraper",
+]
+
 [[package]]
 name = "amqp"
 version = "5.3.1"
@@ -23,12 +32,38 @@ wheels = [
 ]
 
 [[package]]
+name = "asyncio"
+version = "4.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/71/ea/26c489a11f7ca862d5705db67683a7361ce11c23a7b98fc6c2deaeccede2/asyncio-4.0.0.tar.gz", hash = "sha256:570cd9e50db83bc1629152d4d0b7558d6451bb1bfd5dfc2e935d96fc2f40329b", size = 5371 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/57/64/eff2564783bd650ca25e15938d1c5b459cda997574a510f7de69688cb0b4/asyncio-4.0.0-py3-none-any.whl", hash = "sha256:c1eddb0659231837046809e68103969b2bef8b0400d59cfa6363f6b5ed8cc88b", size = 5555 },
+]
+
+[[package]]
 name = "billiard"
 version = "4.2.4"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/58/23/b12ac0bcdfb7360d664f40a00b1bda139cbbbced012c34e375506dbd0143/billiard-4.2.4.tar.gz", hash = "sha256:55f542c371209e03cd5862299b74e52e4fbcba8250ba611ad94276b369b6a85f", size = 156537 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/cb/87/8bab77b323f16d67be364031220069f79159117dd5e43eeb4be2fef1ac9b/billiard-4.2.4-py3-none-any.whl", hash = "sha256:525b42bdec68d2b983347ac312f892db930858495db601b5836ac24e6477cde5", size = 87070 },
+]
+
+[[package]]
+name = "browser"
+version = "0.1.0"
+source = { editable = "src/browser" }
+dependencies = [
+    { name = "asyncio" },
+    { name = "conf" },
+    { name = "patchright" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "asyncio", specifier = ">=4.0.0" },
+    { name = "conf", editable = "packages/conf" },
+    { name = "patchright", specifier = ">=1.56.0" },
 ]
 
 [[package]]
@@ -111,20 +146,11 @@ name = "clutch-or-predict"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "celery", extra = ["redis"] },
     { name = "connectorx" },
-    { name = "dynaconf" },
-    { name = "flower" },
     { name = "matplotlib" },
     { name = "numpy" },
-    { name = "parsel" },
-    { name = "patchright" },
     { name = "polars" },
-    { name = "psycopg", extra = ["binary"] },
-    { name = "psycopg-pool" },
     { name = "pyarrow" },
-    { name = "pydantic" },
-    { name = "redis" },
     { name = "scikit-learn" },
     { name = "seaborn" },
 ]
@@ -136,20 +162,11 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "celery", extras = ["redis"], specifier = ">=5.6.0" },
     { name = "connectorx", specifier = ">=0.4.4" },
-    { name = "dynaconf", specifier = ">=3.2.0" },
-    { name = "flower", specifier = ">=2.0.1" },
     { name = "matplotlib", specifier = ">=3.10.8" },
     { name = "numpy", specifier = ">=2.3.5" },
-    { name = "parsel", specifier = ">=1.10.0" },
-    { name = "patchright", specifier = ">=1.56.0" },
     { name = "polars", specifier = ">=1.36.1" },
-    { name = "psycopg", extras = ["binary"], specifier = ">=3.3.2" },
-    { name = "psycopg-pool", specifier = ">=3.3.0" },
     { name = "pyarrow", specifier = ">=22.0.0" },
-    { name = "pydantic", specifier = ">=2.12.5" },
-    { name = "redis", specifier = ">=5.0.0" },
     { name = "scikit-learn", specifier = ">=1.8.0" },
     { name = "seaborn", specifier = ">=0.13.2" },
 ]
@@ -165,6 +182,17 @@ sdist = { url = "https://files.pythonhosted.org/packages/d8/53/6f443c9a4a8358a93
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6", size = 25335 },
 ]
+
+[[package]]
+name = "conf"
+version = "0.1.0"
+source = { editable = "packages/conf" }
+dependencies = [
+    { name = "dynaconf" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "dynaconf", specifier = ">=3.2.12" }]
 
 [[package]]
 name = "connectorx"
@@ -265,6 +293,21 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/a9/95/a3dbbb5028f35eafb79008e7522a75244477d2838f38cbb722248dabc2a8/cycler-0.12.1.tar.gz", hash = "sha256:88bb128f02ba341da8ef447245a9e138fae777f6a23943da4540077d3601eb1c", size = 7615 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e7/05/c19819d5e3d95294a6f5947fb9b9629efb316b96de511b418c53d245aae6/cycler-0.12.1-py3-none-any.whl", hash = "sha256:85cef7cff222d8644161529808465972e51340599459b8ac3ccbac5a854e0d30", size = 8321 },
+]
+
+[[package]]
+name = "db"
+version = "0.1.0"
+source = { editable = "packages/db" }
+dependencies = [
+    { name = "psycopg", extra = ["binary"] },
+    { name = "psycopg-pool" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "psycopg", extras = ["binary"], specifier = ">=3.3.2" },
+    { name = "psycopg-pool", specifier = ">=3.3.0" },
 ]
 
 [[package]]
@@ -1290,6 +1333,35 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/ac/70/64b4d7ca92f9cf2e6fc6aaa2eecf80bb9b6b985043a9583f32f8177ea122/scipy-1.16.3-cp314-cp314t-musllinux_1_2_x86_64.whl", hash = "sha256:ffa6eea95283b2b8079b821dc11f50a17d0571c92b43e2b5b12764dc5f9b285d", size = 38802779 },
     { url = "https://files.pythonhosted.org/packages/61/82/8d0e39f62764cce5ffd5284131e109f07cf8955aef9ab8ed4e3aa5e30539/scipy-1.16.3-cp314-cp314t-win_amd64.whl", hash = "sha256:d9f48cafc7ce94cf9b15c6bffdc443a81a27bf7075cf2dcd5c8b40f85d10c4e7", size = 39471128 },
     { url = "https://files.pythonhosted.org/packages/64/47/a494741db7280eae6dc033510c319e34d42dd41b7ac0c7ead39354d1a2b5/scipy-1.16.3-cp314-cp314t-win_arm64.whl", hash = "sha256:21d9d6b197227a12dcbf9633320a4e34c6b0e51c57268df255a0942983bac562", size = 26464127 },
+]
+
+[[package]]
+name = "scraper"
+version = "0.1.0"
+source = { editable = "src/scraper" }
+dependencies = [
+    { name = "celery", extra = ["redis"] },
+    { name = "conf" },
+    { name = "flower" },
+    { name = "parsel" },
+    { name = "patchright" },
+    { name = "psycopg", extra = ["binary"] },
+    { name = "psycopg-pool" },
+    { name = "pydantic" },
+    { name = "redis" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "celery", extras = ["redis"], specifier = ">=5.6.0" },
+    { name = "conf", editable = "packages/conf" },
+    { name = "flower", specifier = ">=2.0.1" },
+    { name = "parsel", specifier = ">=1.10.0" },
+    { name = "patchright", specifier = ">=1.56.0" },
+    { name = "psycopg", extras = ["binary"], specifier = ">=3.3.2" },
+    { name = "psycopg-pool", specifier = ">=3.3.0" },
+    { name = "pydantic", specifier = ">=2.12.5" },
+    { name = "redis", specifier = ">=6.4.0" },
 ]
 
 [[package]]

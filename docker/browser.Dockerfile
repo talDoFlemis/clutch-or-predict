@@ -4,17 +4,18 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /app
 
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --locked --no-install-project --no-editable
-
-COPY src/ src/
 COPY pyproject.toml uv.lock ./
+COPY src/browser/pyproject.toml src/browser/pyproject.toml
+COPY packages/conf/pyproject.toml packages/conf/pyproject.toml
 
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-editable
+  uv sync --frozen --no-install-workspace --package=browser
 
+COPY src src
+COPY packages /app/packages
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+  uv sync --locked --no-editable --package=browser
 
 
 FROM mcr.microsoft.com/playwright:v1.56.0-noble AS runner

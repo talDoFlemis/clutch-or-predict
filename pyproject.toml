@@ -5,16 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-  "celery[redis]>=5.6.0",
-  "dynaconf>=3.2.0",
-  "flower>=2.0.1",
   "numpy>=2.3.5",
-  "parsel>=1.10.0",
-  "patchright>=1.56.0",
-  "pydantic>=2.12.5",
-  "redis>=5.0.0",
-  "psycopg[binary]>=3.3.2",
-  "psycopg-pool>=3.3.0",
   "polars>=1.36.1",
   "matplotlib>=3.10.8",
   "seaborn>=0.13.2",
@@ -26,13 +17,11 @@ dependencies = [
 [tool.uv]
 package = true
 
+[tool.uv.workspace]
+members = ["src/scraper", "packages/db", "src/browser", "packages/conf"]
+
 [dependency-groups]
 dev = ["ruff>=0.14.8"]
 
 [project.scripts]
-scraper = "scraper:scrape"
-frontier = "scraper.frontier:main"
 migrate = "db.migrations:main"
-browser = "scraper.browser:main"
-worker = "scraper.worker:main"
-top_events_frontier = "scraper.top_events_frontier:main"

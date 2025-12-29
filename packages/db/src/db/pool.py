@@ -7,7 +7,7 @@ from typing import AsyncGenerator
 from psycopg import AsyncConnection, AsyncCursor
 from psycopg_pool import AsyncConnectionPool
 
-from db.config import get_connection_params
+from conf import get_connection_params
 
 
 class DatabasePool:
