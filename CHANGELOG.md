@@ -1,3 +1,9 @@
+## [1.8.4](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.8.3...v1.8.4) (2025-12-29)
+
+### Documentation
+
+* **readme:** trigger new release ([6be464a](https://github.com/talDoFlemis/clutch-or-predict/commit/6be464a3de858cd44567c0baecfe35a2c1d6628a))
+
 ## [1.8.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.7.0...v1.8.0) (2025-12-29)
 
 ### Features
