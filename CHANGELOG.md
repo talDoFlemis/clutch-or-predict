@@ -1,3 +1,9 @@
+## [1.8.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.7.0...v1.8.0) (2025-12-29)
+
+### Features
+
+* finishing data engineering ([e428f97](https://github.com/talDoFlemis/clutch-or-predict/commit/e428f97c8afb4665977d8fd374d20c94040236a7))
+
 ## [1.7.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.6.0...v1.7.0) (2025-12-20)
 
 ### Features
