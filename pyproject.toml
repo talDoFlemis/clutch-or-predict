@@ -5,20 +5,13 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-  "numpy>=2.3.5",
-  "polars>=1.36.1",
-  "matplotlib>=3.10.8",
-  "seaborn>=0.13.2",
-  "connectorx>=0.4.4",
-  "pyarrow>=22.0.0",
-  "scikit-learn>=1.8.0",
 ]
 
 [tool.uv]
 package = true
 
 [tool.uv.workspace]
-members = ["src/scraper", "packages/db", "src/browser", "packages/conf"]
+members = ["src/scraper", "packages/db", "src/browser", "packages/conf", "packages/notebooks"]
 
 [dependency-groups]
 dev = ["ruff>=0.14.8"]
