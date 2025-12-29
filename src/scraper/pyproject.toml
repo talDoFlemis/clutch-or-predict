@@ -15,10 +15,12 @@ dependencies = [
   "pydantic>=2.12.5",
   "redis>=6.4.0",
   "conf",
+  "db",
 ]
 
 [tool.uv.sources]
 conf = { workspace = true }
+db = { workspace = true }
 
 [project.scripts]
 scraper = "scraper:scrape"

@@ -7,17 +7,20 @@ WORKDIR /app
 ENV UV_PYTHON_DOWNLOADS=never
 ENV UV_PYTHON=/usr/local/bin/python
 
-
-RUN --mount=type=cache,target=/root/.cache/uv \
-  --mount=type=bind,source=uv.lock,target=uv.lock \
-  --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-  uv sync --locked --no-install-project --no-editable
-
-COPY src/ src/
 COPY pyproject.toml uv.lock ./
+COPY src/scraper/pyproject.toml src/scraper/pyproject.toml
+COPY packages/conf/pyproject.toml packages/conf/pyproject.toml
+COPY packages/db/pyproject.toml packages/db/pyproject.toml
+
 
 RUN --mount=type=cache,target=/root/.cache/uv \
-  uv sync --locked --no-editable
+  uv sync --frozen --no-install-workspace --package=scraper
+
+COPY src/scraper src/scraper
+COPY packages packages
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+  uv sync --no-editable --package=scraper
 
 
 FROM al3xos/python-distroless:3.13-debian12
@@ -25,7 +28,8 @@ FROM al3xos/python-distroless:3.13-debian12
 WORKDIR /app
 
 COPY --from=builder --chown=nonroot:nonroot /app/.venv /app/.venv
-COPY --from=builder --chown=nonroot:nonroot /app/src /app/src
+COPY --from=builder --chown=nonroot:nonroot /app/src/scraper /app/src/scraper
+COPY --from=builder --chown=nonroot:nonroot /app/packages /app/packages
 
 ENV PATH="/app/.venv/bin:$PATH"
 
