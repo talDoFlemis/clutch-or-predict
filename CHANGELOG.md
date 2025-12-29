@@ -1,3 +1,9 @@
+## [1.8.6](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.8.5...v1.8.6) (2025-12-29)
+
+### Code Refactoring
+
+* **data-engineering:** move to 02 ([077f33d](https://github.com/talDoFlemis/clutch-or-predict/commit/077f33d05a9bd1d7683093d8976c610f6f4446dd))
+
 ## [1.8.5](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.8.4...v1.8.5) (2025-12-29)
 
 ### Bug Fixes
