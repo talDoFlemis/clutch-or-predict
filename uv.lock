@@ -2256,6 +2256,7 @@ source = { editable = "src/scraper" }
 dependencies = [
     { name = "celery", extra = ["redis"] },
     { name = "conf" },
+    { name = "db" },
     { name = "flower" },
     { name = "parsel" },
     { name = "patchright" },
@@ -2269,6 +2270,7 @@ dependencies = [
 requires-dist = [
     { name = "celery", extras = ["redis"], specifier = ">=5.6.0" },
     { name = "conf", editable = "packages/conf" },
+    { name = "db", editable = "packages/db" },
     { name = "flower", specifier = ">=2.0.1" },
     { name = "parsel", specifier = ">=1.10.0" },
     { name = "patchright", specifier = ">=1.56.0" },
