@@ -6,6 +6,26 @@
 * add notebook lib ([496f12d](https://github.com/talDoFlemis/clutch-or-predict/commit/496f12d3e0d6ef9d68d1c990ef700798cbf4ebb5))
 * finishing data engineering ([e428f97](https://github.com/talDoFlemis/clutch-or-predict/commit/e428f97c8afb4665977d8fd374d20c94040236a7))
 
+### Documentation
+
+* **readme:** trigger new release ([1d314e8](https://github.com/talDoFlemis/clutch-or-predict/commit/1d314e8deb5b53db82b9bc30ea45ab50c3c6ec21))
+
+### Code Refactoring
+
+* **celery-worker:** use new workspace feature ([2cd38da](https://github.com/talDoFlemis/clutch-or-predict/commit/2cd38daf790efda25a8984829af225fb3bf74bf2))
+* **data-engineering:** use new conf package ([341a2c0](https://github.com/talDoFlemis/clutch-or-predict/commit/341a2c0dbfc9e16d2392367ae38dc891e8eaea0a))
+* **eda:** use new data ([d598fa5](https://github.com/talDoFlemis/clutch-or-predict/commit/d598fa5976ec6c4d95413f5414ca94648c288f6e))
+* **migrations:** use new conf package ([d12497d](https://github.com/talDoFlemis/clutch-or-predict/commit/d12497db0a8b8a74970d95f53d0563a67417a605))
+* moving to workspace ([1bbc929](https://github.com/talDoFlemis/clutch-or-predict/commit/1bbc9299ddf69f51ec2c8d6557cc40426e3d08b7))
+
+## [1.8.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.7.0...v1.8.0) (2025-12-29)
+
+### Features
+
+* add ipykernel ([6ea4e89](https://github.com/talDoFlemis/clutch-or-predict/commit/6ea4e89758f2e341bdd23e37501533cbf127ba1c))
+* add notebook lib ([496f12d](https://github.com/talDoFlemis/clutch-or-predict/commit/496f12d3e0d6ef9d68d1c990ef700798cbf4ebb5))
+* finishing data engineering ([e428f97](https://github.com/talDoFlemis/clutch-or-predict/commit/e428f97c8afb4665977d8fd374d20c94040236a7))
+
 ### Code Refactoring
 
 * **celery-worker:** use new workspace feature ([2cd38da](https://github.com/talDoFlemis/clutch-or-predict/commit/2cd38daf790efda25a8984829af225fb3bf74bf2))
