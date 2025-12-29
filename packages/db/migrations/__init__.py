@@ -2,7 +2,7 @@ import psycopg
 import logging
 from typing import List, cast, LiteralString
 
-from db.config import get_connection_params
+from conf import get_connection_params
 
 logger = logging.getLogger(__name__)
 
