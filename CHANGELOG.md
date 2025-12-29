@@ -1,3 +1,9 @@
+## [1.8.5](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.8.4...v1.8.5) (2025-12-29)
+
+### Bug Fixes
+
+* **uv.lock:** lock missing for config ([f05baa3](https://github.com/talDoFlemis/clutch-or-predict/commit/f05baa3ac0dfee2b1c86aa6308e27bf50febf8ac))
+
 ## [1.8.4](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.8.3...v1.8.4) (2025-12-29)
 
 ### Documentation
