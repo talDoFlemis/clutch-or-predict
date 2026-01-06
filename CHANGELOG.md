@@ -1,3 +1,9 @@
+## [1.10.2](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.10.1...v1.10.2) (2026-01-06)
+
+### Documentation
+
+* **data.typ:** move architecture text over figure to better space utilization ([557872c](https://github.com/talDoFlemis/clutch-or-predict/commit/557872c785dd04683ecead94325c5e7e1e2a712f))
+
 ## [1.10.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.10.0...v1.10.1) (2026-01-06)
 
 ### Documentation
