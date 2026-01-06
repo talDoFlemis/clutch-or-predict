@@ -356,6 +356,9 @@ please give #LaTeX hyphenation hints using the `\-` command when necessary.
   autmoatically hide this section in the anonymized submission.
 ]
 
+#include "ack.typ"
+#include "participation.typ"
+
 // We typset reference section header manualy in order to reproduce example
 // paper. No special effort is required (a user should not override
 // `bibliography-opts` as well).
