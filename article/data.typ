@@ -185,6 +185,9 @@ This architecture reduced the average end-to-end processing time—including DOM
 
 === Architecture
 
+The architecture prioritizes stealth over raw speed by mimicking a full desktop environment. While the decoupling of logic and rendering introduces network overhead via the CDP transport layer, it provides the necessary isolation to handle the instability of headful browsers, ensuring that a browser crash does not terminate the scraping logic.
+
+
 #figure(
   image("diagrams/scraping-arch.png"),
   caption: [Distributed scraping architecture leveraging headful browser emulation, containerization, and task orchestration.],
@@ -278,8 +281,6 @@ This architecture reduced the average end-to-end processing time—including DOM
 
 //     %% Final data save flow
 //     WorkerProcess -->|Save Parsed Data| Postgres
-
-The architecture prioritizes stealth over raw speed by mimicking a full desktop environment. While the decoupling of logic and rendering introduces network overhead via the CDP transport layer, it provides the necessary isolation to handle the instability of headful browsers, ensuring that a browser crash does not terminate the scraping logic.
 
 
 === Data Schema and Volume
