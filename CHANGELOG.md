@@ -1,3 +1,9 @@
+## [1.12.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.12.0...v1.12.1) (2026-01-06)
+
+### Bug Fixes
+
+* fixing names ([143172e](https://github.com/talDoFlemis/clutch-or-predict/commit/143172e1ca364ffac3c634d3e7c302f4b270b70f))
+
 ## [1.12.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.11.0...v1.12.0) (2026-01-06)
 
 ### Features
