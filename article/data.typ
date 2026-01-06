@@ -1,3 +1,5 @@
+#import "@preview/bloated-neurips:0.7.0": botrule, midrule, toprule
+
 = Data Acquisition and Engineering
 
 
@@ -73,24 +75,28 @@ By selecting Celery, we maintained a steady ingestion rate of ~3.5 seconds per m
   caption: [Comparative analysis of orchestration tools for high-throughput scraping workloads.],
   table(
     columns: (auto, 1fr, 1fr, 1fr),
-    inset: 10pt,
-    align: horizon,
-    table.header([*Feature*], [*Celery*], [*Apache Airflow*], [*Prefect*]),
-    [*Primary Paradigm*], [Distributed Task Queue], [Workflow Orchestration (DAGs)], [Modern Dataflow Orchestration],
+    align: left + horizon,
+    stroke: none,
+    toprule,
+    table.header([Feature], [Celery], [Apache Airflow], [Prefect]),
+    midrule, [Primary Paradigm], [Distributed Task Queue], [Workflow Orchestration (DAGs)],
+    [Modern Dataflow Orchestration],
 
-    [*State Management*],
+    [State Management],
     [Transient (In-Memory/Redis)],
     [Persistent (RDBMS Writes per State)],
     [Hybrid (API/Server managed)],
 
-    [*Scheduling Latency*], [Real-time (10ms)], [High (Scheduler Heartbeat >1s)], [Medium (API Polling/Push)],
+    [Scheduling Latency], [Real-time (10ms)], [High (Scheduler Heartbeat >1s)], [Medium (API Polling/Push)],
 
-    [*Task Granularity*], [Micro-tasks (Functions)], [Macro-tasks (Container/Job)], [Flexible (Flows & Tasks)],
+    [Task Granularity], [Micro-tasks (Functions)], [Macro-tasks (Container/Job)], [Flexible (Flows & Tasks)],
 
-    [*Overhead Suitability*],
+    [Overhead Suitability],
     [*Optimal* for 20k+ atomic units],
     [High Overhead (DAG Parsing)],
     [Moderate Overhead (State Sync)],
+
+    botrule,
   ),
 )
 
@@ -380,18 +386,19 @@ The scraping pipeline successfully ingested *20,309 unique matches* across *1,37
   caption: [Summary statistics of the ingested CS2 dataset.],
   table(
     columns: (1fr, 1fr),
-    inset: 10pt,
-    align: horizon,
-    table.header(
-      [*Entity*], [*Count*]
-    ),
-    [Matches], [20,309],
-    [Events], [1,378],
-    [Map Stats (Distinct Maps)], [43,342],
-    [Player Map Stats], [430,689],
-    [Unique Players], [4,998],
-    [Unique Teams], [1,529]
-  )
+    align: left + horizon,
+    stroke: none,
+    toprule,
+    table.header([Entity], [Count]),
+
+    midrule, [Matches],
+    [20,309], [Events],
+    [1,378], [Map Stats (Distinct Maps)],
+    [43,342], [Player Map Stats],
+    [430,689], [Unique Players],
+    [4,998], [Unique Teams],
+    [1,529], botrule,
+  ),
 ) <tab-dataset-stats>
 
 === Match and Map Distributions
