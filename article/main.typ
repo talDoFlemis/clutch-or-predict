@@ -34,7 +34,7 @@
 
 #include "introduction.typ"
 
-#include "scraping.typ"
+#include "data.typ"
 
 = Submission of papers to NeurIPS 2025
 
