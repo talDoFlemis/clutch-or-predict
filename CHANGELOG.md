@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.10.0...v1.10.1) (2026-01-06)
+
+### Documentation
+
+* **data.typ:** refactor tables to use format required by neurips ([c0daa63](https://github.com/talDoFlemis/clutch-or-predict/commit/c0daa63b56886f414cd529484cf43ed9ec076ca9))
+* **main.typ:** add participation and ack sections ([405f115](https://github.com/talDoFlemis/clutch-or-predict/commit/405f115afcae94ee8c26ba290157b2198d563f5e))
+
 ## [1.10.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.9.0...v1.10.0) (2026-01-06)
 
 ### Features
