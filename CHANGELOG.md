@@ -1,3 +1,13 @@
+## [1.11.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.10.2...v1.11.0) (2026-01-06)
+
+### Features
+
+* add introduction text ([6a9a454](https://github.com/talDoFlemis/clutch-or-predict/commit/6a9a4543a6cb59365c101b4c33a01fabf0aa023c))
+
+### Documentation
+
+* **data.typ:** duplicated primary challenge statement ([5bfad13](https://github.com/talDoFlemis/clutch-or-predict/commit/5bfad13040da383100667681efa3234eb00fbdfc))
+
 ## [1.10.2](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.10.1...v1.10.2) (2026-01-06)
 
 ### Documentation
