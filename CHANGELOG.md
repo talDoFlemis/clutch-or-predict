@@ -1,3 +1,16 @@
+## [1.10.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.9.0...v1.10.0) (2026-01-06)
+
+### Features
+
+* **eda:** save images to article dir ([b0a8820](https://github.com/talDoFlemis/clutch-or-predict/commit/b0a8820a16d4efc531a8b506301a27fddc3f14ca))
+* **eda:** write dataset to parquet ([11b26a9](https://github.com/talDoFlemis/clutch-or-predict/commit/11b26a9e2aba2061391eb78d006dc89848815a5b))
+* **git-lfs:** track parquet ([36633e5](https://github.com/talDoFlemis/clutch-or-predict/commit/36633e5d3bd7b86b0dd4dee6576419a94db9037b))
+
+### Documentation
+
+* add EDA to typst data section on typst ([e15cfca](https://github.com/talDoFlemis/clutch-or-predict/commit/e15cfca96c0b9386c69756c8579da42dbf19df71))
+* **main.typ:** add cavalcante to Said ([12f2836](https://github.com/talDoFlemis/clutch-or-predict/commit/12f2836ee3f1fe51f79e3f412eb070380102eebc))
+
 ## [1.9.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.8.7...v1.9.0) (2026-01-06)
 
 ### Features
