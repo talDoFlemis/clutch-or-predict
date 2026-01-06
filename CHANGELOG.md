@@ -1,3 +1,9 @@
+## [1.12.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.11.0...v1.12.0) (2026-01-06)
+
+### Features
+
+* adding feature engineering and predictor ([277f7b2](https://github.com/talDoFlemis/clutch-or-predict/commit/277f7b24710ee952a3ad08556022a4627d698485))
+
 ## [1.11.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.10.2...v1.11.0) (2026-01-06)
 
 ### Features
