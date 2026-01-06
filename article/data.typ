@@ -1,4 +1,4 @@
-= Data
+= Data Acquisition and Engineering
 
 
 To address the scarcity of public datasets for Counter-Strike 2 (CS2) match prediction, we engineered a custom data acquisition pipeline. While datasets for Counter-Strike: Global Offensive (CS:GO) exist @csgodataset, the transition to the Source 2 engine rendered previous data obsolete for mechanical and physics-based prediction models @source2. Consequently, we targeted #link("https://hltv.org")[HLTV], the premier repository for CS2 esports data, to construct a novel dataset comprising over 20,000 professional matches @hltv.
@@ -276,9 +276,7 @@ This architecture reduced the average end-to-end processing time—including DOM
 The architecture prioritizes stealth over raw speed by mimicking a full desktop environment. While the decoupling of logic and rendering introduces network overhead via the CDP transport layer, it provides the necessary isolation to handle the instability of headful browsers, ensuring that a browser crash does not terminate the scraping logic.
 
 
-== Data Schema and Volume
-
-The scraping campaign covered the period from January 1, 2023, to December 22, 2025. The resulting dataset includes 20,309 matches across 1,378 events, comprising 43,342 distinct map play-throughs and 430,689 individual player performance records.
+=== Data Schema and Volume
 
 Data persistence is handled by a PostgreSQL database normalized to third normal form (3NF). The schema, managed via migration scripts, captures granular details including map vetoes (pick/ban phases) and player statistics.
 
@@ -365,6 +363,62 @@ Data persistence is handled by a PostgreSQL database normalized to third normal 
 //     PLAYERS ||--|{ PLAYER_MAP_STATS : "achieves"
 //     TEAMS ||--|{ PLAYER_MAP_STATS : "represented by"
 
+
+
+== Exploratory Data Analysis
+
+To validate the integrity and coverage of the scraped dataset, we performed a comprehensive exploratory analysis on the relational entities: Events, Matches, Map Statistics, and Player Performance. The dataset spans a temporal range from *October 4, 2023, to December 28, 2025*, capturing the complete competitive lifecycle of Counter-Strike 2 to date.
+
+=== Dataset Volumetrics and Demographics
+
+The scraping pipeline successfully ingested *20,309 unique matches* across *1,378 distinct events*. This corresponds to a high-density capture of the professional ecosystem, categorized into two primary tiers based on team ranking:
+
+- *Top-Tier Events:* Approximately 30.6% of the dataset comprises events featuring "Top 50" teams, representing the elite tier of competition.
+- *Grassroots & Qualifiers:* The remaining ~69.4% covers lower-tier cups and qualifiers, providing a crucial training ground for model generalization against high-variance gameplay.
+
+#figure(
+  caption: [Summary statistics of the ingested CS2 dataset.],
+  table(
+    columns: (1fr, 1fr),
+    inset: 10pt,
+    align: horizon,
+    table.header(
+      [*Entity*], [*Count*]
+    ),
+    [Matches], [20,309],
+    [Events], [1,378],
+    [Map Stats (Distinct Maps)], [43,342],
+    [Player Map Stats], [430,689],
+    [Unique Players], [4,998],
+    [Unique Teams], [1,529]
+  )
+) <tab-dataset-stats>
+
+=== Match and Map Distributions
+
+The distribution of match outcomes reveals a slight seeding bias. In both top-tier and non-top-tier events, `team_1` (typically the higher seed or bracket favorite) retains a win rate of approximately *55.3% to 55.9%*. This baseline probability serves as a critical prior for our predictive models.
+
+The granular `map_stats` table reveals that the dataset contains *43,342 map iterations*. The scoring distribution follows the standard MR12 (Max Rounds 12) format introduced in CS2, though historical MR15 data may exist in the tail. The `vetos` analysis confirms a bimodal distribution in series formats, dominated by Best-of-1 (BO1) and Best-of-3 (BO3) configurations, with Best-of-5 (BO5) finals appearing as sparse outliers.
+
+#figure(
+  image("images/best_of_distribution.png"),
+  caption: [Distribution of match outcomes by team seeding and series format.],
+) <fig-best-of-distribution>
+
+The map pool analysis indicates a diverse selection of competitive maps, with traditional staples like *Ancient*, *Mirage*, and *Inferno* dominating pick rates.
+
+#figure(
+  image("images/map_picks_by_best_of.png"),
+  caption: [Pick rates of competitive maps in the CS2 dataset.],
+) <fig-map-pick-rates>
+
+=== Player Performance Feature Space
+
+The deepest level of granularity resides in the `player_map_stats` relation (N=430,689). Unlike traditional box-score datasets, our feature space includes advanced economy and utility metrics specific to the Source 2 engine:
+
+- *Rating 3.0*: A custom aggregate performance metric (`rating_3_dot_0_ct`, `rating_3_dot_0_tr`) normalized for the new MR12 economy.
+- *Impact Metrics*: Granular tracking of `opening_kills`, `traded_deaths`, and `clutches` per side (CT/T).
+- *Utility & Support*: Features such as `flash_assists` and `kast` (Kill, Assist, Survive, Trade) percentage, essential for quantifying non-fragging contributions.
 
 == Feature Engineering
 
