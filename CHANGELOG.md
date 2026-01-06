@@ -1,3 +1,13 @@
+## [1.9.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.8.7...v1.9.0) (2026-01-06)
+
+### Features
+
+* add png and pdf to git lfs ([746b9b6](https://github.com/talDoFlemis/clutch-or-predict/commit/746b9b628ffcc0558bf9fff8c452e7bd1833d282))
+
+### Documentation
+
+* add scraping part to article ([7290d4b](https://github.com/talDoFlemis/clutch-or-predict/commit/7290d4be4175639b6ffcce59958947a86c68e998))
+
 ## [1.8.7](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.8.6...v1.8.7) (2025-12-29)
 
 ### Documentation
