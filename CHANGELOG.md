@@ -1,3 +1,10 @@
+## [1.16.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.15.0...v1.16.0) (2026-01-07)
+
+### Features
+
+* adding new lfs track ([dc2a3d9](https://github.com/talDoFlemis/clutch-or-predict/commit/dc2a3d98f231ab76b5741081d9a3746cc9079347))
+* adding new sections ([3d18502](https://github.com/talDoFlemis/clutch-or-predict/commit/3d1850235b15ca5b7ccc088de0ce5f5eb113a581))
+
 ## [1.15.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.14.0...v1.15.0) (2026-01-07)
 
 ### Features
