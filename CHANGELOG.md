@@ -1,3 +1,9 @@
+## [1.19.2](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.19.1...v1.19.2) (2026-01-07)
+
+### Code Refactoring
+
+* final modifications ([5e52de3](https://github.com/talDoFlemis/clutch-or-predict/commit/5e52de395f13fd0bf0ba31e417428ea63179d11f))
+
 ## [1.19.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.19.0...v1.19.1) (2026-01-07)
 
 ### Bug Fixes
