@@ -1,0 +1,127 @@
+flavors:
+  python_function:
+    data: model.ubj
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.xgboost
+    python_version: 3.12.11
+  xgboost:
+    code: null
+    data: model.ubj
+    model_class: xgboost.core.Booster
+    model_format: ubj
+    xgb_version: 3.1.2
+is_signature_from_type_hint: false
+mlflow_version: 3.8.1
+model_id: null
+model_size_bytes: 1317564
+model_uuid: 2fc80b094235495ca3e591cbfe090a42
+prompts: null
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": "t1_kills_avg", "required": true}, {"type":
+    "double", "name": "t1_kills_median", "required": true}, {"type": "double", "name":
+    "t1_kills_p25", "required": true}, {"type": "double", "name": "t1_kills_p75",
+    "required": true}, {"type": "double", "name": "t1_kills_std", "required": true},
+    {"type": "double", "name": "t1_clutches_avg", "required": true}, {"type": "double",
+    "name": "t1_clutches_median", "required": true}, {"type": "double", "name": "t1_clutches_p25",
+    "required": true}, {"type": "double", "name": "t1_clutches_p75", "required": true},
+    {"type": "double", "name": "t1_clutches_std", "required": true}, {"type": "double",
+    "name": "t1_headshot_avg", "required": true}, {"type": "double", "name": "t1_headshot_median",
+    "required": true}, {"type": "double", "name": "t1_headshot_p25", "required": true},
+    {"type": "double", "name": "t1_headshot_p75", "required": true}, {"type": "double",
+    "name": "t1_headshot_std", "required": true}, {"type": "double", "name": "t1_flash_avg",
+    "required": true}, {"type": "double", "name": "t1_flash_median", "required": true},
+    {"type": "double", "name": "t1_flash_p25", "required": true}, {"type": "double",
+    "name": "t1_flash_p75", "required": true}, {"type": "double", "name": "t1_flash_std",
+    "required": true}, {"type": "double", "name": "t1_assist_avg", "required": true},
+    {"type": "double", "name": "t1_assist_median", "required": true}, {"type": "double",
+    "name": "t1_assist_p25", "required": true}, {"type": "double", "name": "t1_assist_p75",
+    "required": true}, {"type": "double", "name": "t1_assist_std", "required": true},
+    {"type": "double", "name": "t1_deaths_avg", "required": true}, {"type": "double",
+    "name": "t1_deaths_median", "required": true}, {"type": "double", "name": "t1_deaths_p25",
+    "required": true}, {"type": "double", "name": "t1_deaths_p75", "required": true},
+    {"type": "double", "name": "t1_deaths_std", "required": true}, {"type": "double",
+    "name": "t1_traded_deaths_avg", "required": true}, {"type": "double", "name":
+    "t1_traded_deaths_median", "required": true}, {"type": "double", "name": "t1_traded_deaths_p25",
+    "required": true}, {"type": "double", "name": "t1_traded_deaths_p75", "required":
+    true}, {"type": "double", "name": "t1_traded_deaths_std", "required": true}, {"type":
+    "double", "name": "t1_adr_avg", "required": true}, {"type": "double", "name":
+    "t1_adr_median", "required": true}, {"type": "double", "name": "t1_adr_p25", "required":
+    true}, {"type": "double", "name": "t1_adr_p75", "required": true}, {"type": "double",
+    "name": "t1_adr_std", "required": true}, {"type": "double", "name": "t1_opening_kills_avg",
+    "required": true}, {"type": "double", "name": "t1_opening_kills_median", "required":
+    true}, {"type": "double", "name": "t1_opening_kills_p25", "required": true}, {"type":
+    "double", "name": "t1_opening_kills_p75", "required": true}, {"type": "double",
+    "name": "t1_opening_kills_std", "required": true}, {"type": "double", "name":
+    "t1_opening_deaths_avg", "required": true}, {"type": "double", "name": "t1_opening_deaths_median",
+    "required": true}, {"type": "double", "name": "t1_opening_deaths_p25", "required":
+    true}, {"type": "double", "name": "t1_opening_deaths_p75", "required": true},
+    {"type": "double", "name": "t1_opening_deaths_std", "required": true}, {"type":
+    "double", "name": "t1_multikills_avg", "required": true}, {"type": "double", "name":
+    "t1_multikills_median", "required": true}, {"type": "double", "name": "t1_multikills_p25",
+    "required": true}, {"type": "double", "name": "t1_multikills_p75", "required":
+    true}, {"type": "double", "name": "t1_multikills_std", "required": true}, {"type":
+    "double", "name": "t1_kast_avg", "required": true}, {"type": "double", "name":
+    "t1_kast_median", "required": true}, {"type": "double", "name": "t1_kast_p25",
+    "required": true}, {"type": "double", "name": "t1_kast_p75", "required": true},
+    {"type": "double", "name": "t1_kast_std", "required": true}, {"type": "double",
+    "name": "t2_kills_avg", "required": true}, {"type": "double", "name": "t2_kills_median",
+    "required": true}, {"type": "double", "name": "t2_kills_p25", "required": true},
+    {"type": "double", "name": "t2_kills_p75", "required": true}, {"type": "double",
+    "name": "t2_kills_std", "required": true}, {"type": "double", "name": "t2_clutches_avg",
+    "required": true}, {"type": "double", "name": "t2_clutches_median", "required":
+    true}, {"type": "double", "name": "t2_clutches_p25", "required": true}, {"type":
+    "double", "name": "t2_clutches_p75", "required": true}, {"type": "double", "name":
+    "t2_clutches_std", "required": true}, {"type": "double", "name": "t2_headshot_avg",
+    "required": true}, {"type": "double", "name": "t2_headshot_median", "required":
+    true}, {"type": "double", "name": "t2_headshot_p25", "required": true}, {"type":
+    "double", "name": "t2_headshot_p75", "required": true}, {"type": "double", "name":
+    "t2_headshot_std", "required": true}, {"type": "double", "name": "t2_flash_avg",
+    "required": true}, {"type": "double", "name": "t2_flash_median", "required": true},
+    {"type": "double", "name": "t2_flash_p25", "required": true}, {"type": "double",
+    "name": "t2_flash_p75", "required": true}, {"type": "double", "name": "t2_flash_std",
+    "required": true}, {"type": "double", "name": "t2_assist_avg", "required": true},
+    {"type": "double", "name": "t2_assist_median", "required": true}, {"type": "double",
+    "name": "t2_assist_p25", "required": true}, {"type": "double", "name": "t2_assist_p75",
+    "required": true}, {"type": "double", "name": "t2_assist_std", "required": true},
+    {"type": "double", "name": "t2_deaths_avg", "required": true}, {"type": "double",
+    "name": "t2_deaths_median", "required": true}, {"type": "double", "name": "t2_deaths_p25",
+    "required": true}, {"type": "double", "name": "t2_deaths_p75", "required": true},
+    {"type": "double", "name": "t2_deaths_std", "required": true}, {"type": "double",
+    "name": "t2_traded_deaths_avg", "required": true}, {"type": "double", "name":
+    "t2_traded_deaths_median", "required": true}, {"type": "double", "name": "t2_traded_deaths_p25",
+    "required": true}, {"type": "double", "name": "t2_traded_deaths_p75", "required":
+    true}, {"type": "double", "name": "t2_traded_deaths_std", "required": true}, {"type":
+    "double", "name": "t2_adr_avg", "required": true}, {"type": "double", "name":
+    "t2_adr_median", "required": true}, {"type": "double", "name": "t2_adr_p25", "required":
+    true}, {"type": "double", "name": "t2_adr_p75", "required": true}, {"type": "double",
+    "name": "t2_adr_std", "required": true}, {"type": "double", "name": "t2_opening_kills_avg",
+    "required": true}, {"type": "double", "name": "t2_opening_kills_median", "required":
+    true}, {"type": "double", "name": "t2_opening_kills_p25", "required": true}, {"type":
+    "double", "name": "t2_opening_kills_p75", "required": true}, {"type": "double",
+    "name": "t2_opening_kills_std", "required": true}, {"type": "double", "name":
+    "t2_opening_deaths_avg", "required": true}, {"type": "double", "name": "t2_opening_deaths_median",
+    "required": true}, {"type": "double", "name": "t2_opening_deaths_p25", "required":
+    true}, {"type": "double", "name": "t2_opening_deaths_p75", "required": true},
+    {"type": "double", "name": "t2_opening_deaths_std", "required": true}, {"type":
+    "double", "name": "t2_multikills_avg", "required": true}, {"type": "double", "name":
+    "t2_multikills_median", "required": true}, {"type": "double", "name": "t2_multikills_p25",
+    "required": true}, {"type": "double", "name": "t2_multikills_p75", "required":
+    true}, {"type": "double", "name": "t2_multikills_std", "required": true}, {"type":
+    "double", "name": "t2_kast_avg", "required": true}, {"type": "double", "name":
+    "t2_kast_median", "required": true}, {"type": "double", "name": "t2_kast_p25",
+    "required": true}, {"type": "double", "name": "t2_kast_p75", "required": true},
+    {"type": "double", "name": "t2_kast_std", "required": true}, {"type": "integer",
+    "name": "map_encoding", "required": true}, {"type": "double", "name": "t1_elo",
+    "required": true}, {"type": "double", "name": "t2_elo", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "float32", "shape": [-1,
+    2]}}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-01-07 12:00:51.377967'
