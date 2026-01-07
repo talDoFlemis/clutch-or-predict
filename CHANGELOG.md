@@ -1,3 +1,9 @@
+## [1.16.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.16.0...v1.16.1) (2026-01-07)
+
+### Bug Fixes
+
+* changing dependencies location ([a08ae47](https://github.com/talDoFlemis/clutch-or-predict/commit/a08ae47f19d963482797e932f5667c067d84af1b))
+
 ## [1.16.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.15.0...v1.16.0) (2026-01-07)
 
 ### Features
