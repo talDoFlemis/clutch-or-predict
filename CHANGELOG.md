@@ -1,3 +1,15 @@
+## [1.16.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.15.0...v1.16.0) (2026-01-07)
+
+### Features
+
+* adding new lfs track ([dc2a3d9](https://github.com/talDoFlemis/clutch-or-predict/commit/dc2a3d98f231ab76b5741081d9a3746cc9079347))
+* adding new sections ([3d18502](https://github.com/talDoFlemis/clutch-or-predict/commit/3d1850235b15ca5b7ccc088de0ce5f5eb113a581))
+* adding ubj to lfs ([c76dc4c](https://github.com/talDoFlemis/clutch-or-predict/commit/c76dc4c6b69523c1514fbd5ce457128fc3625a2d))
+
+### Bug Fixes
+
+* changing dependencies location ([85788b9](https://github.com/talDoFlemis/clutch-or-predict/commit/85788b934ff33397b0a4d0a2f87977cf64d74c5d))
+
 ## [1.17.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.16.0...v1.17.0) (2026-01-07)
 
 ### Features
