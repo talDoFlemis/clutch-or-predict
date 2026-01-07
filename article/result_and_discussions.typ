@@ -4,8 +4,8 @@
 
 The trained XGBoost model achieved strong generalization performance on the temporal test set:
 
-- *Test Accuracy:* The model correctly predicted match outcomes with reasonable accuracy on unseen future matches
-- *Log Loss:* The probabilistic predictions exhibited well-calibrated confidence scores, as evidenced by low cross-entropy loss
+- *Test Accuracy:* 82.02% — The model correctly predicted match outcomes with high accuracy on unseen future matches
+- *Log Loss:* 0.4412 — The probabilistic predictions exhibited well-calibrated confidence scores, as evidenced by low cross-entropy loss
 
 #figure(
   image("images/confusion_matrix.png", width: 50%),

@@ -59,6 +59,32 @@ The hyperparameter search space encompassed 50 random configurations sampled fro
 
 The optimization objective was *negative log loss* (cross-entropy), which directly penalizes poorly calibrated probability estimates, being critical for a prediction system intended for probabilistic betting or confidence-weighted recommendations. @ziyin2019deepgamblerslearningabstain
 
+After evaluating 50 random configurations, the best-performing hyperparameter combination was:
+
+#figure(
+  caption: [Optimal hyperparameters identified through randomized search.],
+  table(
+    columns: (1fr, 1fr),
+    align: left + horizon,
+    stroke: none,
+    toprule,
+    table.header([Parameter], [Optimal Value]),
+    midrule,
+    [`n_estimators`], [800],
+    [`learning_rate`], [0.01],
+    [`max_depth`], [4],
+    [`min_child_weight`], [3],
+    [`gamma`], [0.2],
+    [`subsample`], [0.8],
+    [`colsample_bytree`], [0.5],
+    [`reg_alpha` (L1)], [0],
+    [`reg_lambda` (L2)], [4],
+    botrule,
+  ),
+) <tab-optimal-hyperparameters>
+
+These parameters strike a balance between model complexity and regularization: the moderate `max_depth` of 4 prevents overfitting to noisy patterns, while the large ensemble size (800 trees) with conservative learning rate (0.01) allows gradual convergence. The high L2 regularization (`reg_lambda=4`) combined with no L1 penalty suggests that retaining all features with smoothed coefficients outperforms aggressive feature selection.
+
 Critically, we incorporated *sample weighting* during training using the previously engineered `event_weight` feature. This ensures that high-importance matches (e.g., Major finals) contribute proportionally more to the loss function than low-stakes qualifiers, effectively teaching the model to prioritize patterns from competitive equilibrium states.
 
 == Model Persistence and Deployment
