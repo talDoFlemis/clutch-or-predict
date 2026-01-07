@@ -1,3 +1,9 @@
+## [1.16.2](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.16.1...v1.16.2) (2026-01-07)
+
+### Documentation
+
+* split model_training, results and discussions to another files ([bdd38a6](https://github.com/talDoFlemis/clutch-or-predict/commit/bdd38a6394360b2c2c6dfb656abbabaf6626f315))
+
 ## [1.16.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.16.0...v1.16.1) (2026-01-07)
 
 ### Bug Fixes
