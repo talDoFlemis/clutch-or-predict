@@ -1,3 +1,13 @@
+## [1.13.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.12.1...v1.13.0) (2026-01-07)
+
+### Features
+
+* add graphviz to jhub ([f66632b](https://github.com/talDoFlemis/clutch-or-predict/commit/f66632b875d4a2f52e67e389a9da5c887d80e0cd))
+
+### Code Refactoring
+
+* **02-data-engineering:** use get_database_url from conf package ([1f0b08c](https://github.com/talDoFlemis/clutch-or-predict/commit/1f0b08c68585a03791010695a69b3547f4a63742))
+
 ## [1.12.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.12.0...v1.12.1) (2026-01-06)
 
 ### Bug Fixes
