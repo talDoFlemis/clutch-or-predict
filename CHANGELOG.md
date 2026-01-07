@@ -1,3 +1,13 @@
+## [1.15.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.14.0...v1.15.0) (2026-01-07)
+
+### Features
+
+* adding new images ([4d1ff3a](https://github.com/talDoFlemis/clutch-or-predict/commit/4d1ff3a874aba7bd05de4a9b6301455f435a6d29))
+* adding new images and finalizing feature engineering section ([fc38c13](https://github.com/talDoFlemis/clutch-or-predict/commit/fc38c13d67ade2fcc44080cfdc3bf970f462342c))
+* adding new shap plots ([5d3e036](https://github.com/talDoFlemis/clutch-or-predict/commit/5d3e0360b24dc03206039ab467b864cf806636e5))
+* exporting model to mlflow ([7652a18](https://github.com/talDoFlemis/clutch-or-predict/commit/7652a18db3aac2ad4b7a1e555e313c44745682ee))
+* updating uv lock ([4d0cf03](https://github.com/talDoFlemis/clutch-or-predict/commit/4d0cf036473ddd66bf82953da7ed2a7ae88d4eda))
+
 ## [1.14.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.13.0...v1.14.0) (2026-01-07)
 
 ### Features
