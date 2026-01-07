@@ -1,3 +1,9 @@
+## [1.17.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.16.0...v1.17.0) (2026-01-07)
+
+### Features
+
+* adding ubj to lfs ([c76dc4c](https://github.com/talDoFlemis/clutch-or-predict/commit/c76dc4c6b69523c1514fbd5ce457128fc3625a2d))
+
 ## [1.16.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.15.0...v1.16.0) (2026-01-07)
 
 ### Features
