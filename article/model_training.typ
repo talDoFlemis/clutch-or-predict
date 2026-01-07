@@ -21,13 +21,7 @@ After feature pruning, the final input space comprised 140 features (70 per team
 
 == Model Architecture: XGBoost Classifier
 
-We selected *XGBoost* (Extreme Gradient Boosting) as our primary modeling framework due to its demonstrated superiority in structured/tabular prediction tasks. XGBoost's gradient-boosted decision trees provide several advantages over deep learning alternatives for this domain: @grinsztajn2022tree
-
-- *Native handling of heterogeneous feature types* (continuous, categorical, ordinal)
-- *Intrinsic feature importance computation* via information gain
-- *Robustness to feature scaling* (no normalization required)
-- *Regularization mechanisms* (L1/L2, tree depth constraints) to prevent overfitting
-- *Efficient training* on CPU hardware without GPU dependency
+We selected *XGBoost* (Extreme Gradient Boosting) as our primary modeling framework due to its demonstrated superiority in structured/tabular prediction tasks. XGBoost's gradient-boosted decision trees provide several advantages over deep learning alternatives for this domain. @grinsztajn2022tree
 \
 
 The model was configured with the following base parameters:

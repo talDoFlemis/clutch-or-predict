@@ -16,12 +16,12 @@
 )
 
 #show: neurips2025.with(
-  title: [Predicting Counter-Strike Matches using a XGBoost Model],
+  title: [Counter-Strike 2 Match Prediction: From Web Scraping to XGBoost Model Development],
   authors: (authors, affls),
-  keywords: ("Machine Learning", "NeurIPS"),
+  keywords: ("Machine Learning", "Esports Analytics", "Web Scraping", "XGBoost", "SHAP"),
   abstract: [
-    Predicting outcomes in professional esports presents unique challenges due to the high-dimensional, heterogeneous nature of match data and the non-stationary dynamics of team performance. In this work, we propose a robust machine learning framework for forecasting Counter-Strike match winners using Extreme Gradient Boosting (XGBoost). Unlike traditional approaches that rely on random cross-validation, we employ a strict temporal train-test split strategy to eliminate look-ahead bias, ensuring that the model is evaluated solely on future unseen data. The model is optimized using Randomized Search with time-series cross-validation, specifically targeting negative log-loss to maximize probability calibration, a critical requirement for confidence, weighted applications such as betting markets. Our results reinforce recent empirical findings that tree-based architectures continue to outperform deep learning baselines on tabular esports data, providing a scalable, interpretable, and mathematically sound prediction system.
-  ],
+    Accurate forecasting in professional esports is hindered by data scarcity and the non-stationary dynamics of team performance. This work presents an end-to-end machine learning framework for Counter-Strike 2 (CS2) match prediction. Addressing the lack of public benchmarks, we implemented a distributed data acquisition infrastructure with robust WAF evasion, compiling a novel dataset of 20,309 professional matches across 1,378 events. We introduce a feature engineering pipeline that synthesizes dynamic Elo ratings with event-weighted performance statistics and distributional team metrics. Leveraging an XGBoost architecture optimized for tabular data, our model achieves strong predictive performance under a strict temporal evaluation protocol designed to eliminate look-ahead bias. Furthermore, SHAP-based interpretability analysis reveals that while Elo ratings drive global predictive stability, granular performance metrics exhibit complex contextual interaction effects, offering new insights into the determinants of competitive success.
+    ],
   bibliography: bibliography("main.bib"),
   bibliography-opts: (title: none, full: true),
   // appendix: [
