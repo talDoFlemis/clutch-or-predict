@@ -1,3 +1,9 @@
+## [1.17.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.16.2...v1.17.0) (2026-01-07)
+
+### Features
+
+* terminei minha parte do artigo ([f81d17a](https://github.com/talDoFlemis/clutch-or-predict/commit/f81d17af9ac71761994e0d55de526c17b3541504))
+
 ## [1.16.2](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.16.1...v1.16.2) (2026-01-07)
 
 ### Documentation
