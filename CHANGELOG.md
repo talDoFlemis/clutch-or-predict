@@ -1,3 +1,9 @@
+## [1.19.1](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.19.0...v1.19.1) (2026-01-07)
+
+### Bug Fixes
+
+* fixing email ([5aad908](https://github.com/talDoFlemis/clutch-or-predict/commit/5aad908318708c9a0856ebaed75d42a282f57e2b))
+
 ## [1.19.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.18.0...v1.19.0) (2026-01-07)
 
 ### Features
