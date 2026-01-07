@@ -11,7 +11,7 @@
 )
 
 #let authors = (
-  (name: "Erik Bayerlein", affl: "ufc", email: "erik.bayerlein@alu.ufc.br", equal: true),
+  (name: "Erik Bayerlein", affl: "ufc", email: "erik.bayer@alu.ufc.br", equal: true),
   (name: "Said C. Rodrigues", affl: "ufc", email: "saidrodrigues@alu.ufc.br", equal: true),
 )
 
