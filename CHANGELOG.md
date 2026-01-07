@@ -1,3 +1,9 @@
+## [1.18.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.17.0...v1.18.0) (2026-01-07)
+
+### Features
+
+* adding abstract ([ea2b75d](https://github.com/talDoFlemis/clutch-or-predict/commit/ea2b75d18654c1280700c688d6d8313594db6ff5))
+
 ## [1.17.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.16.2...v1.17.0) (2026-01-07)
 
 ### Features
