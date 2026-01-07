@@ -492,13 +492,15 @@ $ w_"raw" = w_"VRS" times w_"recency" times w_"type" times w_"elite" $
 
 To prevent extreme weight disparities (which can destabilize gradient-based learning), we apply log-normalization followed by min-max scaling to $[0, 1]$:
 
-$ w_"final" = (log(1 + w_"raw") - log(1 + w_"min"))) / (log(1 + w_"max") - log(1 + w_"min")) $
+$ w_"final" = (log(1 + w_"raw") - log(1 + w_"min")) / (log(1 + w_"max") - log(1 + w_"min")) $
 
 This produces a smooth, bounded weighting scheme where recent Major matches approach 1.0, while stale qualifier matches decay toward 0.0.
 
 === Elo Rating System with Dynamic K-Factor
 
-To capture evolving team strength trajectories, we implemented a modified Elo rating system adapted for CS2. Traditional Elo systems use fixed K-factors, which fail to account for the varying informativeness of different match contexts. Our design incorporates *event-aware K-factor scaling* to amplify or dampen rating updates based on match importance.
+We build upon the classical Elo rating framework originally developed for chess, adapting the formulation proposed in @glickman1999rating to the competitive context of CS2. Our objective is to capture both short-term team momentum and the intrinsic value of each match by incorporating the previously defined `event_weight`.
+
+To model evolving team-strength trajectories, we implement a modified Elo system tailored to esports competition. Standard Elo formulations rely on fixed K-factors, which inadequately reflect the heterogeneous informativeness of matches across tournaments and competitive tiers. To address this limitation, we introduce event-aware K-factor scaling, allowing rating updates to be amplified or attenuated according to match importance, as determined by the event context.
 
 ==== Core Elo Mechanics
 Each team maintains a scalar rating $R$, initialized at 1500. The expected win probability for team $i$ against team $j$ is:
@@ -528,9 +530,9 @@ This prevents rating inflation when heavily favored teams defeat weaker opponent
   caption: [Elo rating trajectories of selected teams over time],
 ) <fig-teams-elos-over-time>
 
-As shown in Figure @fig-teams-elos-over-time, the Elo trajectories reflect the competitive performance of each team over the observed period. Team Vitality exhibits a pronounced increase between January and July 2025, corresponding to a dominant competitive phase in which it secured multiple tournament victories, including Major championships.  
+As shown in @fig-teams-elos-over-time, the Elo trajectories reflect the competitive performance of each team over the observed period. Team Vitality exhibits a pronounced increase between January and July 2025, corresponding to a dominant competitive phase in which it secured multiple tournament victories, including Major championships.  
 
-FURIA displays a more gradual progression for most of the timeline, followed by a sharp rise beginning in October 2025, coinciding with a streak of four championship wins.  
+Furia displays a more gradual progression for most of the timeline, followed by a sharp rise beginning in October 2025, coinciding with a streak of four championship wins.  
 
 Finally, FaZe Clan shows relatively stable Elo dynamics throughout the year, with moderate fluctuations. However, a strong performance toward the end of the season results, culminating in a run to the Budapest Major Finals, where they faced Team Vitality.
 
@@ -553,7 +555,7 @@ The engineered dataset comprises 43,060 match-map instances with the following f
     [Team Performance Stats], [140], [`t1_kills_avg`, `t2_adr_median`, `t1_rating_3_dot_0_std`],
     [Elo Ratings], [2], [`t1_elo`, `t2_elo`],
     [Event Context], [1], [`event_weight`],
-    [Map Encoding], [1], [`map_encoding` (0–7)],
+    [Map Encoding], [1], [`map_encoding` (0–9)],
     [Temporal], [1], [`match_date`],
     [Target Variable], [1], [`winner` (0=team_1, 1=team_2)],
     botrule,
