@@ -430,4 +430,136 @@ The deepest level of granularity resides in the `player_map_stats` relation (N=4
 
 == Feature Engineering
 
-#text(red)[TODO: BOYOLINE]
+Transforming raw player-level statistics into predictive team-level features requires careful aggregation strategies. Since CS2 is inherently asymmetric, with Counter-Terrorist (CT) and Terrorist (TR) sides exhibiting distinct tactical constraints, we first unify side-specific metrics before applying distributional aggregations.
+
+=== Side-Agnostic Performance Metrics
+
+Player statistics in the `player_map_stats` table are recorded separately for CT and TR sides (e.g., `kills_ct`, `kills_tr`). To produce map-level player profiles, we sum corresponding side metrics:
+
+$ "kills" = "kills"_"CT" + "kills"_"TR" $
+
+This transformation is applied to all 14 core performance indicators: `kills`, `clutches`, `headshot`, `flash`, `assist`, `deaths`, `traded_deaths`, `adr`, `swing`, `rating_3_dot_0`, `opening_kills`, `opening_deaths`, `multikills`, and `kast`.
+
+=== Team-Level Statistical Aggregation
+
+Given the five-player composition of CS2 teams, we characterize team performance distributions using five robust statistics per metric:
+
+1. *Mean* ($mu$): Central tendency of team skill
+2. *Median* ($tilde(mu)$): Robust measure resistant to outliers (e.g., carry players)
+3. *25th Percentile* ($P_(25)$): Lower-bound performance floor
+4. *75th Percentile* ($P_(75)$): Upper-bound performance ceiling
+5. *Standard Deviation* ($sigma$): Intra-team consistency measure
+
+For each of the 14 performance metrics, this produces 5 aggregated features, yielding $14 times 5 = 70$ team-level descriptors per match side. Since matches involve two teams, the final feature space contains $70 times 2 = 140$ team performance features, prefixed as `t1_*` and `t2_*`.
+
+The use of quantiles ($P_(25)$, $P_(75)$) captures the *depth* of a roster, i.e., teams with narrow interquartile ranges exhibit balanced lineups, while wide ranges indicate reliance on star players.
+
+=== Dynamic Match Weighting via Event Context
+
+Not all matches carry equal predictive value. A group-stage match between lower-ranked teams in an open qualifier provides weaker signal than a playoff match at a Major championship. To encode this informativeness gradient, we designed a composite weighting function that incorporates four contextual dimensions:
+
+==== 1. Temporal Recency Decay
+Recent matches better reflect current team form. We apply exponential decay with a half-life of 180 days:
+
+$ w_"recency" = 0.5^((t_"current" - t_"match") / 180) $
+
+==== 2. VRS (Valve Regional Standing) Weight
+HLTV assigns a `vrs_weight` score to events based on participating team rankings and prize pool. During data collection, we observed that not all events have an associated `vrs_weight`. Additionally, the raw `vrs_weight` values range from 0 to 1,000,000.
+
+To address missing values and ensure consistent scaling, we assign higher importance to events featuring top-50 teams. Events without an assigned `vrs_weight` are initialized with a baseline weight of 0.1. The original scores are then normalized to the interval $[0.1, 10]$ using the following transformation:
+
+$ w_"VRS" = 0.1 + ("vrs_weight" / 1000000) times 9.9 $
+
+==== 3. Event Type Multiplier
+Ranked matches (official Valve tournaments) receive higher weight than exhibition or online cups:
+
+$ w_"type" = cases(
+  1.5 quad &"if event_type = Ranked",
+  1.0 quad &"otherwise"
+) $
+
+==== 4. Top-50 Team Participation
+Matches featuring elite teams (HLTV Top 50) provide higher-quality training signal:
+
+$ w_"elite" = cases(
+  1.7 quad &"if has_top_50_teams = True",
+  1.0 quad &"otherwise"
+) $
+
+The final *raw weight* is the product of these components:
+
+$ w_"raw" = w_"VRS" times w_"recency" times w_"type" times w_"elite" $
+
+To prevent extreme weight disparities (which can destabilize gradient-based learning), we apply log-normalization followed by min-max scaling to $[0, 1]$:
+
+$ w_"final" = (log(1 + w_"raw") - log(1 + w_"min"))) / (log(1 + w_"max") - log(1 + w_"min")) $
+
+This produces a smooth, bounded weighting scheme where recent Major matches approach 1.0, while stale qualifier matches decay toward 0.0.
+
+=== Elo Rating System with Dynamic K-Factor
+
+To capture evolving team strength trajectories, we implemented a modified Elo rating system adapted for CS2. Traditional Elo systems use fixed K-factors, which fail to account for the varying informativeness of different match contexts. Our design incorporates *event-aware K-factor scaling* to amplify or dampen rating updates based on match importance.
+
+==== Core Elo Mechanics
+Each team maintains a scalar rating $R$, initialized at 1500. The expected win probability for team $i$ against team $j$ is:
+
+$ E_i = 1 / (1 + 10^((R_j - R_i) \/ 400)) $
+
+After a match with outcome $S_i \in {0, 1}$, where $0$ denotes a win by Team 1 and $1$ denotes a win by Team 2, the ratings are updated according to:
+
+$ R_i^"new" = R_i^"old" + K dot (S_i - E_i) $
+
+==== Dynamic K-Factor Adjustment
+The K-factor modulates the magnitude of rating shifts. We scale the base $K = 20$ by the normalized event weight:
+
+$ K_"effective" = 20 times (0.5 + w_"final") $
+
+This ensures that high-stakes matches (Major playoffs) produce larger rating swings, while low-priority events contribute minimal noise. Additionally, we apply an *upset dampening* heuristic:
+
+$ K_"effective" = cases(
+  0.5 K_"effective" quad &"if" |R_i - R_j| > 400 "and favorite wins",
+  K_"effective" quad &"otherwise"
+) $
+
+This prevents rating inflation when heavily favored teams defeat weaker opponents, while preserving full sensitivity to upsets.
+
+#figure(
+  image("images/teams_elos_over_time.png"),
+  caption: [Elo rating trajectories of selected teams over time],
+) <fig-teams-elos-over-time>
+
+As shown in Figure @fig-teams-elos-over-time, the Elo trajectories reflect the competitive performance of each team over the observed period. Team Vitality exhibits a pronounced increase between January and July 2025, corresponding to a dominant competitive phase in which it secured multiple tournament victories, including Major championships.  
+
+FURIA displays a more gradual progression for most of the timeline, followed by a sharp rise beginning in October 2025, coinciding with a streak of four championship wins.  
+
+Finally, FaZe Clan shows relatively stable Elo dynamics throughout the year, with moderate fluctuations. However, a strong performance toward the end of the season results, culminating in a run to the Budapest Major Finals, where they faced Team Vitality.
+
+==== Temporal Integration
+Elo ratings are computed *chronologically* across all 43,060 match-maps, sorted by `match_date`. For each match, we record the *pre-match* Elo values of both teams (`t1_elo`, `t2_elo`), then update their ratings post-match. This ensures ratings reflect team strength *at the time of prediction*, avoiding leakage of future information.
+
+=== Final Feature Space
+
+The engineered dataset comprises 43,060 match-map instances with the following feature categories:
+
+#figure(
+  caption: [Engineered feature categories in the final match prediction dataset.],
+  table(
+    columns: (1fr, auto, 2fr),
+    align: left + horizon,
+    stroke: none,
+    toprule,
+    table.header([Category], [Count], [Examples]),
+    midrule,
+    [Team Performance Stats], [140], [`t1_kills_avg`, `t2_adr_median`, `t1_rating_3_dot_0_std`],
+    [Elo Ratings], [2], [`t1_elo`, `t2_elo`],
+    [Event Context], [1], [`event_weight`],
+    [Map Encoding], [1], [`map_encoding` (0–7)],
+    [Temporal], [1], [`match_date`],
+    [Target Variable], [1], [`winner` (0=team_1, 1=team_2)],
+    botrule,
+  ),
+) <tab-feature-summary>
+
+The dataset is exported as `match_dataset.csv` (43,060 rows × 147 columns) for downstream modeling.
+
+
