@@ -503,7 +503,7 @@ This produces a smooth, bounded weighting scheme where recent Major matches appr
 
 === Elo Rating System with Dynamic K-Factor
 
-We build upon the classical Elo rating framework originally developed for chess, adapting the formulation proposed in @glickman1999rating to the competitive context of CS2. Our objective is to capture both short-term team momentum and the intrinsic value of each match by incorporating the previously defined `event_weight`.
+We build upon the classical Elo rating framework originally developed for chess, adapting the formulation @glickman1999rating to the competitive context of CS2. Our objective is to capture both short-term team momentum and the intrinsic value of each match by incorporating the previously defined `event_weight`.
 
 To model evolving team-strength trajectories, we implement a modified Elo system tailored to esports competition. Standard Elo formulations rely on fixed K-factors, which inadequately reflect the heterogeneous informativeness of matches across tournaments and competitive tiers. To address this limitation, we introduce event-aware K-factor scaling, allowing rating updates to be amplified or attenuated according to match importance, as determined by the event context.
 
