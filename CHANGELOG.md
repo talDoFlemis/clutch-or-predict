@@ -1,3 +1,15 @@
+## [1.14.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.13.0...v1.14.0) (2026-01-07)
+
+### Features
+
+* adding feature engineering section ([bab60ad](https://github.com/talDoFlemis/clutch-or-predict/commit/bab60ad9e8aefdbc031fa30fb57f24374798db68))
+* adding final model ([b37273a](https://github.com/talDoFlemis/clutch-or-predict/commit/b37273a24ca93147c6cb9a16002438adb02d8604))
+* saving final match_dataset parquet ([6c5aae9](https://github.com/talDoFlemis/clutch-or-predict/commit/6c5aae9752b7b32435b3e4e70c34d13df4d8b612))
+
+### Code Refactoring
+
+* improving csv to parquet ([2d5fe33](https://github.com/talDoFlemis/clutch-or-predict/commit/2d5fe33ddfd2769dfc70ea3e5c50b312d1d792b5))
+
 ## [1.13.0](https://github.com/talDoFlemis/clutch-or-predict/compare/v1.12.1...v1.13.0) (2026-01-07)
 
 ### Features
