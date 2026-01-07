@@ -1,11 +1,5 @@
 \
 \
-\
-\
-\
-\
-\
-
 = Results and Discussion
 
 == Predictive Performance Metrics

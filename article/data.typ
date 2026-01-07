@@ -1,5 +1,6 @@
 #import "@preview/bloated-neurips:0.7.0": botrule, midrule, toprule
 
+\
 = Data Acquisition and Engineering
 
 
@@ -459,6 +460,10 @@ The use of quantiles ($P_(25)$, $P_(75)$) captures the *depth* of a roster, i.e.
 Not all matches carry equal predictive value. A group-stage match between lower-ranked teams in an open qualifier provides weaker signal than a playoff match at a Major championship. To encode this informativeness gradient, we designed a composite weighting function that incorporates four contextual dimensions:
 
 ==== 1. Temporal Recency Decay
+\
+\
+\
+
 Recent matches better reflect current team form. We apply exponential decay with a half-life of 180 days:
 
 $ w_"recency" = 0.5^((t_"current" - t_"match") / 180) $
@@ -539,6 +544,13 @@ Finally, FaZe Clan shows relatively stable Elo dynamics throughout the year, wit
 ==== Temporal Integration
 Elo ratings are computed *chronologically* across all 43,060 match-maps, sorted by `match_date`. For each match, we record the *pre-match* Elo values of both teams (`t1_elo`, `t2_elo`), then update their ratings post-match. This ensures ratings reflect team strength *at the time of prediction*, avoiding leakage of future information.
 
+\
+\
+\
+\
+\
+\
+\
 === Final Feature Space
 
 The engineered dataset comprises 43,060 match-map instances with the following feature categories:
