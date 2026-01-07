@@ -1,3 +1,11 @@
+\
+\
+\
+\
+\
+\
+\
+
 = Results and Discussion
 
 == Predictive Performance Metrics
@@ -33,7 +41,7 @@ The ROC curve (@fig-roc-curve) illustrates the model's discrimination ability ac
 Understanding which features drive predictions is essential for validating model behavior and identifying potential biases or data leakage.
 
 #figure(
-  image("images/important_feat.png", width: 85%),
+  image("images/important_feat.png", width: 70%),
   caption: [Top 20 most important features ranked by XGBoost's gain metric, which measures the average improvement in loss contributed by each feature across all decision splits.],
 ) <fig-important-feat>
 
@@ -46,60 +54,68 @@ Beyond Elo, the model heavily weights team-aggregated performance statistics suc
 
 Notably, *distributional features* (median, P25, P75, standard deviation) appear frequently, suggesting that roster depth and consistency matter beyond simply having high-performing star players. Teams with narrow interquartile ranges (balanced rosters) may exhibit more predictable performance than teams reliant on carry players.
 
+\
+\
+\
+\
+\
+\
+\
+\
+\
+
 == Explainability via SHAP (SHapley Additive exPlanations)
 
 To move beyond global feature importance and understand *how* features influence individual predictions, we employed SHAP, a game-theoretic framework for model interpretability.
 
 #figure(
   image("images/feature_impact_pred.png", width: 90%),
-  caption: [SHAP summary plot showing feature impact on predictions. Each point represents a sample; color indicates feature value (red = high, blue = low). Position along x-axis shows SHAP value (rightward push toward Team 2 win, leftward push toward Team 1 win).],
+  caption: [SHAP summary plot showing feature impact on predictions. Each point represents a sample; Position along x-axis shows SHAP value, rightward push toward Team 2 win, leftward push toward Team 1 win.],
 ) <fig-feature_impact_pred>
 
 @fig-feature_impact_pred provides a global view of feature behavior:
 - *Elo disparity:* Higher `t2_elo` (red points) strongly pushes predictions toward Team 2 victory (positive SHAP values), while higher `t1_elo` pushes toward Team 1.
-- *Performance metrics:* Features like ADR, kills, and KAST exhibit consistent directional relationships—higher values for Team 2 increase their win probability.
-- *Feature interactions:* The vertical spread at any given SHAP value indicates interaction effects with other features, captured by the color-coding.
+- *Performance metrics:* Features like ADR, kills, and KAST exhibit consistent directional relationships, i.e., higher values for Team 2 increase their win probability.
 
 #figure(
   image("images/indiv_pred.png", width: 90%),
-  caption: [SHAP waterfall plot for a high-confidence individual prediction. Starting from the base value (average model output), each bar shows how a feature pushed the prediction higher or lower, culminating in the final predicted probability.],
+  caption: [SHAP waterfall plot for a high-confidence individual prediction.],
 ) <fig-indiv-pred>
 
-@fig-indiv-pred demonstrates an individual prediction's decision path. For this particular match, the model identified a significant Elo advantage for one team, reinforced by superior ADR and kill statistics, leading to a high-confidence prediction. Such visualizations are invaluable for model debugging and stakeholder trust, as they make the "black box" transparent.
+@fig-indiv-pred demonstrates an individual prediction's decision path. For this particular match, the model identified a significant Elo advantage for one team, reinforced by superior ADR and kill statistics, leading to a high-confidence prediction.
 
 #figure(
   image("images/top_6_important_feat.png", width: 100%),
-  caption: [SHAP dependence plots for the top 6 most important features. Each subplot shows how a feature's value affects predictions, with color indicating interaction effects from the most correlated feature.],
+  caption: [SHAP dependence plots for the top 6 most important features.],
 ) <fig-top-6-important-feat>
 
 @fig-top-6-important-feat reveals nonlinear relationships and interaction effects:
 - *Elo ratings:* Exhibit near-linear SHAP relationships, confirming their role as stable, interpretable strength indicators.
 - *Performance statistics:* Display more complex patterns, with interaction effects (color gradients) suggesting that certain features are more predictive in specific contexts (e.g., high ADR matters more when facing lower-Elo opponents).
 
-== Model Complexity and Overfitting Analysis
-
-To assess whether the model learned generalizable patterns versus memorizing training data, we visualize a representative decision tree from the ensemble.
-
-#figure(
-  image("images/tree.png", width: 100%),
-  caption: [Visualization of the first decision tree in the XGBoost ensemble. Nodes show split conditions, leaf values, and sample coverage.],
-) <fig-tree>
-
-@fig-tree illustrates a typical tree structure from the boosted ensemble. The relatively shallow depth (controlled by `max_depth` hyperparameter) and regularization constraints prevent individual trees from overfitting to noise. The ensemble aggregates hundreds of such trees, each capturing different aspects of the feature space.
-
-The tree's top splits prioritize Elo ratings and performance medians, reinforcing the global importance analysis. Leaf node values are small (typical of gradient boosting, where each tree contributes incremental corrections), and the sample coverage shows balanced splits, avoiding degenerate branches that fit only a handful of outliers.
-
 == Discussion and Limitations
+
+=== Model Selection and Architecture Decisions
+
+During the initial phase of model development, we experimented with an LSTM-embedded neural network architecture to capture temporal dependencies in team performance. The hypothesis was that sequential modeling of match histories could better capture momentum and form trajectories. However, this approach yielded unsatisfying results with a critical flaw: while the LSTM model performed reasonably well on matches between teams of similar competitive tiers (e.g., tier 1 vs. tier 1, tier 3 vs. tier 3), it exhibited systematic failures when predicting cross-tier matchups. Specifically, the model would incorrectly favor tier 3 teams against tier 1 opponents when the lower-tier team had accumulated strong statistical performances against weaker opposition.
+
+Although we were able to empirically identify this failure mode, the precise mechanism driving this behavior remains unclear. We hypothesize that the LSTM may overemphasize short-term performance trends without adequately contextualizing opponent strength, effectively conflating dominance over weaker competition with true competitive parity.
+
+This limitation motivated the adoption of XGBoost with Elo ratings as core features. Elo ratings inherently encode opponent strength through their update mechanism—victories against strong opponents yield larger rating increases than wins against weak teams. By combining Elo (contextual strength assessment) with raw performance statistics, the gradient boosting approach successfully balanced historical form with competitive tier awareness.
+
+\
 
 === Model Strengths
 1. *Temporal validity:* Strict chronological splitting ensures the model is evaluated under realistic deployment conditions.
 2. *Interpretability:* SHAP analysis confirms that predictions align with domain knowledge (Elo, ADR, kills).
 3. *Calibration:* Low log loss and ROC performance indicate well-calibrated probability estimates suitable for decision-making under uncertainty.
+4. *Opponent-aware strength estimation:* Elo integration prevents the inflation of predictions for teams with strong statistics against weak competition.
 
 === Limitations and Future Work
 1. *Roster instability:* The model aggregates player statistics by team but does not track individual player transfers. A roster change mid-season could degrade predictions until sufficient new match data accumulates.
 2. *Map-specific strategies:* While map encoding is included, the model treats it as a simple categorical variable. Future work could investigate map-specific Elo ratings or interaction terms.
-3. *External factors:* Psychological factors (e.g., high-pressure playoffs) and meta-game shifts (weapon balance patches) are not explicitly modeled. Incorporating sentiment analysis of team communications or patch version embeddings could improve robustness.
-4. *Sample size for rare events:* Major finals and other high-stakes matches are underrepresented in the dataset. Synthetic oversampling or importance re-weighting strategies could mitigate this.
+3. *Sample size for rare events:* Major finals and other high-stakes matches are underrepresented in the dataset. Synthetic oversampling or importance re-weighting strategies could mitigate this.
 
-Despite these limitations, the model demonstrates that machine learning can effectively leverage historical match data to produce actionable predictions for Counter-Strike 2 esports outcomes. The combination of Elo ratings (capturing team strength dynamics) and granular player statistics (capturing tactical execution) provides a rich signal for match forecasting.
+Despite these limitations, the model demonstrates that it can effectively leverage historical match data to produce actionable predictions for Counter-Strike 2 esports outcomes.
+
+\

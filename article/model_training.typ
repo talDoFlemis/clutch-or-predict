@@ -4,7 +4,7 @@
 
 == Temporal Train-Test Split Strategy
 
-To ensure realistic out-of-sample evaluation, we employ a strict temporal split rather than random shuffling. All matches occurring on or before November 30, 2025, constitute the training set, while matches after this date serve as the test set. This mimics real-world deployment where the model must predict future matches based solely on historical data, preventing any form of temporal leakage.
+To ensure realistic out-of-sample evaluation, we employ a strict temporal split rather than random shuffling. All matches occurring on or before November 30, 2025, constitute the training set, while matches after this date serve as the test set. This mimics real-world deployment where the model must predict future matches based solely on historical data, preventing any form of temporal leakage. @cerqueira2020evaluating
 
 This chronological partitioning yielded:
 - *Training Set:* Historical matches (≤ 2025-11-30)
@@ -12,22 +12,23 @@ This chronological partitioning yielded:
 
 == Feature Selection and Preprocessing
 
-Prior to model training, we conducted a preliminary feature analysis to identify features that could lead to a bad generalization. Two feature categories were excluded:
+Prior to model training, we conducted a preliminary feature analysis to identify features that could negatively impact generalization performance. Two feature categories were excluded:
 
-1. *Swing Statistics:* These metrics exhibited high multicollinearity with other performance indicators without contributing additional predictive power.
+1. *Swing Statistics:* These metrics exhibited high multicollinearity with other performance indicators without contributing additional predictive power. @muthukrishnan2024effect
 2. *Rating 3.0 Metrics:* While conceptually valuable, Rating 3.0 is a composite metric already incorporating kills, deaths, and utility usage. To avoid feature redundancy and preserve model interpretability, we relied on the constituent raw statistics instead.
 
 After feature pruning, the final input space comprised 140 features (70 per team), plus Elo ratings, map encoding, and event weight.
 
 == Model Architecture: XGBoost Classifier
 
-We selected *XGBoost* (Extreme Gradient Boosting) as our primary modeling framework due to its demonstrated superiority in structured/tabular prediction tasks. XGBoost's gradient-boosted decision trees provide several advantages over deep learning alternatives for this domain:
+We selected *XGBoost* (Extreme Gradient Boosting) as our primary modeling framework due to its demonstrated superiority in structured/tabular prediction tasks. XGBoost's gradient-boosted decision trees provide several advantages over deep learning alternatives for this domain: @grinsztajn2022tree
 
 - *Native handling of heterogeneous feature types* (continuous, categorical, ordinal)
 - *Intrinsic feature importance computation* via information gain
 - *Robustness to feature scaling* (no normalization required)
 - *Regularization mechanisms* (L1/L2, tree depth constraints) to prevent overfitting
 - *Efficient training* on CPU hardware without GPU dependency
+\
 
 The model was configured with the following base parameters:
 - *Objective:* `binary:logistic` (binary classification with probability output)
@@ -36,7 +37,7 @@ The model was configured with the following base parameters:
 
 == Hyperparameter Optimization
 
-To identify the optimal model configuration, we performed *Randomized Search Cross-Validation* with a time-series aware splitting strategy. Standard k-fold cross-validation violates temporal ordering assumptions; instead, we employed `TimeSeriesSplit` with 5 folds, ensuring that each validation fold contains only data chronologically subsequent to its training fold.
+To identify the optimal model configuration, we performed *Randomized Search Cross-Validation* with a time-series aware splitting strategy. @bischl2023hyperparameter Standard k-fold cross-validation violates temporal ordering assumptions; instead, we employed `TimeSeriesSplit` with 5 folds, ensuring that each validation fold contains only data chronologically subsequent to its training fold. @hyndman2018forecasting
 
 The hyperparameter search space encompassed 50 random configurations sampled from:
 
@@ -62,7 +63,7 @@ The hyperparameter search space encompassed 50 random configurations sampled fro
   ),
 ) <tab-hyperparameter-search>
 
-The optimization objective was *negative log loss* (cross-entropy), which directly penalizes poorly calibrated probability estimates, which are critical for a prediction system intended for probabilistic betting or confidence-weighted recommendations.
+The optimization objective was *negative log loss* (cross-entropy), which directly penalizes poorly calibrated probability estimates, being critical for a prediction system intended for probabilistic betting or confidence-weighted recommendations. @ziyin2019deepgamblerslearningabstain
 
 Critically, we incorporated *sample weighting* during training using the previously engineered `event_weight` feature. This ensures that high-importance matches (e.g., Major finals) contribute proportionally more to the loss function than low-stakes qualifiers, effectively teaching the model to prioritize patterns from competitive equilibrium states.
 
